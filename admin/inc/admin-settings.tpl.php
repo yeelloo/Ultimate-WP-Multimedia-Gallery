@@ -1,0 +1,115 @@
+<?php
+if (!defined('ABSPATH')) exit;
+$lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType') : 'facebook';
+?>
+
+<div id="wpmg_wrap">
+	<?php include 'admin-header.tpl.php'; ?>
+	<div class="CSSTableGenerator" id="tbl-wpmg">
+        <h3>General Settings:</h3>
+        <table class="wpmgInnerTbl" style="margin: 20px auto 0;"> 
+            <tbody> 
+                <tr>    
+                    <td>LightBox Type</td>
+                    <td class="">
+                        <?php foreach (
+                            [
+                                'facebook' => 'Default', 'light_rounded' => 'Light Rounded', 'dark_rounded' => 'Dark Rounded',
+                                'light_square' => 'Light Square', 'dark_square' => 'Dark Square', 
+                            ] 
+                            as $key => $type) : ?>
+                            <div class="lighBoxTypeFieldGroup">
+                                <input type="radio" name="lightBoxType" id="<?php echo $key ?>" value="<?php echo $key ?>" <?php if($lightBoxType == $key ) echo 'checked' ?>>
+                                <label for="<?php echo $key ?>"><?php echo $type ?></label>
+                            </div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+                <tr>    
+                    <td>YouTube Channel ID <?php if(!WPMG::$licenced) echo '<sup>Pro Only</sup>' ?></td>
+                    <td class="wpmgGridFull"><input <?php if(!WPMG::$licenced) echo 'disabled' ?> type="text" name="youtube-chaneel-id" id="youtube-chaneel-id" value="<?php echo get_option('youtube-chaneel-id') ?>" placeholder="YouTube Chaneel ID"></td>
+                </tr>
+                <tr>    
+                    <td>Social Meida HashTag</td>
+                    <td class="wpmgGridFull"><input type="text" name="social-media-hastag" id="social-media-hastag" value="<?php echo get_option('social-media-hastag') ?>" placeholder="Social Meida HashTag"></td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td style="text-align: right;"> 
+                        <a href="#" class="button wpmg-update-settings">Update</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Filter Colors:</h3>
+        <table class="wpmgInnerTbl" style="margin: 20px auto;"> 
+            <tbody> 
+                <tr>    
+                    <td>Filter Wrapper BG</td>
+                    <td class="wpmgGridFull"><input type="text" name="filter-wrapper-bg" id="filter-wrapper-bg" value="<?php echo get_option('filter-wrapper-bg') ?>"></td>
+                </tr>
+                <tr>    
+                    <td>Button Text Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="filter-text-color" id="filter-text-color" value="<?php echo get_option('filter-text-color') ?>"></td>
+                </tr>
+                <tr>    
+                    <td>Button BG Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="filter-bg-color" id="filter-bg-color" value="<?php echo get_option('filter-bg-color') ?>"></td>
+                </tr>
+                <tr>    
+                    <td>Button Border Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="filter-border-color" id="filter-border-color" value="<?php echo get_option('filter-border-color') ?>"></td>
+                </tr>
+
+                <tr>    
+                    <td>Active Button Text Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="act-filter-text-color" id="act-filter-text-color" value="<?php echo get_option('act-filter-text-color') ?>"></td>
+                </tr>
+                <tr>    
+                    <td>Active Button BG Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="act-filter-bg-color" id="act-filter-bg-color" value="<?php echo get_option('act-filter-bg-color') ?>"></td>
+                </tr>
+                <tr>    
+                    <td>Active Button Border Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="act-filter-border-color" id="act-filter-border-color" value="<?php echo get_option('act-filter-border-color') ?>"></td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td style="text-align: right;"> 
+                        <a href="#" class="button wpmg-update-filter-settings">Update</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Pagination Colors:</h3>
+        <table class="wpmgInnerTbl" style="margin: 20px auto 0;"> 
+            <tbody> 
+                <tr>    
+                    <td>Text Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="paginate-text-color" id="paginate-text-color" value="<?php echo get_option('paginate-text-color') ?>" placeholder="Pagination Text Color"></td>
+                </tr>
+                <tr>    
+                    <td>BG Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="paginate-bg-color" id="paginate-bg-color" value="<?php echo get_option('paginate-bg-color') ?>" placeholder="Pagination BG Color"></td>
+                </tr>
+                <tr>    
+                    <td>Active Text Color &nbsp; &nbsp;</td>
+                    <td class="wpmgGridFull"><input type="text" name="act-paginate-text-color" id="act-paginate-text-color" value="<?php echo get_option('act-paginate-text-color') ?>" placeholder="Pagination Active Text Color"></td>
+                </tr>
+                <tr>    
+                    <td>Active BG Color</td>
+                    <td class="wpmgGridFull"><input type="text" name="act-paginate-bg-color" id="act-paginate-bg-color" value="<?php echo get_option('act-paginate-bg-color') ?>" placeholder="Pagination Active BG Color"></td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td style="text-align: right;"> 
+                        <a href="#" class="button wpmg-update-paginate-settings">Update</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
