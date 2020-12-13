@@ -2,7 +2,7 @@
 Contributors: yeelloo
 Tags: gallery, videos, YouTube, Vimeo
 Requires at least: 4.7
-Tested up to: 5.4
+Tested up to: 5.6
 Stable tag: 1.0
 Requires PHP: 7.2
 License: GPLv2 or later

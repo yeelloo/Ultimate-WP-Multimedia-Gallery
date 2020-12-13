@@ -23,9 +23,17 @@ class wpmgFront {
 	}
 
 	public static function getVimeoThumb($id) {
-	    $data = file_get_contents("https://vimeo.com/api/v2/video/$id.json");
-	    $data = json_decode($data);
-	    return $data[0]->thumbnail_large;
+		$request = wp_remote_get( "https://vimeo.com/api/v2/video/{$id}.json" );
+		if( is_wp_error( $request ) ) {
+			return WPMG__URL . '/front/images/video_1280x720.jpg';
+		}
+		$body = json_decode(wp_remote_retrieve_body( $request ));
+		if( is_array($body) && count($body) > 0 ){
+			$body = array_pop($body);
+			return $body->thumbnail_large;
+		} else {
+			return WPMG__URL . '/front/images/video_1280x720.jpg';
+		}
 	}
 
 	public static function wpmgGalleryShortcode($attr){
@@ -52,7 +60,7 @@ class wpmgFront {
 		$_wpmg_gallery_tags = $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$get_tags = $wpdb->get_results(" SELECT * FROM  $_wpmg_gallery_tags WHERE gallery_id = $gallery_id  ORDER BY $_wpmg_gallery_tags.`menu_order` ASC");
 		?>
-		<div class="wpmg-filter controls">
+		<div class="wpmg-filter controls <?php echo get_option('wpmg-filter-align') ?>">
 			<div class="mixitup_menu_group">
 				<button type="button" class="control" data-filter="all">Show All</button>
 				<?php foreach ($get_tags as $key => $tag) {

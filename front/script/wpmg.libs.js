@@ -42,7 +42,7 @@ a.dom.targets.length&&!(o=a.state.activeDataset||[]).length)throw new Error(e.me
  * @license   Commercial use requires a commercial license.
  *            https://www.kunkalabs.com/mixitup-pagination/licenses/
  *
- *            Non-commercial use permitted under same terms as  license.
+ *            Non-commercial use permitted under same terms as license.
  *            http://creativecommons.org/licenses/by-nc/3.0/
  */
 

@@ -17,10 +17,6 @@ if( count($gall_items) > 0 ) :
 
 	<div class="wpmfgmixer gcontainer">
 	<?php foreach ($gall_items as $key => $item) :
-
-		$item->caption = wp_strip_all_tags(str_replace('|', '-', str_replace('/', '-', $item->caption)));
-		$item->description = wp_strip_all_tags(str_replace('|', '-', str_replace('/', '-', $item->description)));
-
 		if( $item->type == 'youtube' && (int)$item->attachment_id > 0 )
 		{
 			echo '
@@ -98,12 +94,12 @@ if( count($gall_items) > 0 ) :
 		<div class="mixitup-page-list"></div>
 		<div class="mixitup-page-stats"></div>
 	</div>
-
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	
 	<div class="wpmgEnd" data-id="<?php echo $_id ?>"></div>
 	<style>
 		/*Filter*/
+		.wpmg-filter.controls.center-aligned{text-align: center; display: flex; justify-content: center;}
+		.wpmg-filter.controls.center-aligned .mixitup_menu_group.mixitup_menu_sort{float: none; display: inline-flex;}
 		.wpmg-wrap .wpmg-filter.controls{ 
 			<?php if( get_option('filter-wrapper-bg') != "" ) echo 'background: '.get_option('filter-wrapper-bg').';' ?>
 		}
@@ -137,13 +133,16 @@ if( count($gall_items) > 0 ) :
 		}
 		<?php endif; ?>
 		/*Paginate*/
+		.wpmg-wrap .mixitup-page-list button.mixitup-control{
+			<?php if( get_option('filter-bg-color') != "" ) echo 'background: '.get_option('filter-bg-color').';' ?>
+		}
 		.wpmg-wrap button.mixitup-control.mixitup-control-active{
 			<?php if( get_option('act-paginate-text-color') != "" ) echo 'color: '.get_option('act-paginate-text-color').';' ?>
-			<?php if( get_option('act-paginate-bg-color') != "" ) echo 'background: '.get_option('act-paginate-bg-color').';' ?>
+			<?php if( get_option('act-paginate-bg-color') != "" ) echo 'background: '.get_option('act-paginate-bg-color').' !important;' ?>
 		}
 		.wpmg-wrap #wpmg-filter-dropdown{
 			<?php if( get_option('filter-text-color') != "" ) echo 'color: '.get_option('filter-text-color').' !important;' ?>
-			<?php if( get_option('filter-bg-color') != "" ) echo 'background: '.get_option('filter-bg-color').';' ?>
+			<?php if( get_option('filter-bg-color') != "" ) echo 'background-color: '.get_option('filter-bg-color').';' ?>
 			<?php if( get_option('filter-border-color') != "" ) echo 'border: 2px solid '.get_option('filter-border-color').';' ?>
 		}
 	</style>

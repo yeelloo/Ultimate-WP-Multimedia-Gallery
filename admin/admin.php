@@ -35,6 +35,7 @@ class wpmgAdmin {
 		add_action( 'wp_ajax_wpmg_paginate_settings_ajax', ['wpmgAdmin', 'wpmg_paginate_settings_action'] );
 		add_action( 'wp_ajax_wpmg_change_data_permission_ajax', ['wpmgAdmin', 'wpmg_change_data_permission_action'] );
 		add_action( 'wp_ajax_wpmg_general_settings_ajax', ['wpmgAdmin', 'wpmg_general_settings_action'] );
+		add_action( 'wp_ajax_wpmg_filter_alignment_ajax', ['wpmgAdmin', 'wpmg_filter_alignment_action'] );
 		add_action( 'wp_ajax_wpmg_update_filter_order', ['wpmgAdmin', 'wpmg_update_filter_order_action'] );
 
 		add_action( 'wp_ajax_searchGalleryItems', ['wpmgAdmin', 'searchGalleryItems_action'] );
@@ -156,19 +157,20 @@ class wpmgAdmin {
 
 	public static function wpmg_save_gallery_items(){
 		$_POST = stripslashes_deep($_POST);
-		$items = $_POST['itemObj'];
+		$items = (is_array($_POST['itemObj'])) ? $_POST['itemObj'] : [];
+		$gallery_id = (int)$_POST['gallery_id'];
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 		foreach ($items as $key => $item) {
 			$wpdb->insert(
 				$item_tbl,
 				[
-					'gallery_id' 	=> $_POST['gallery_id'],
-					'attachment_id' => $item['attachment_id'],
-					'image' 		=> ( isset($_POST['video']) ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : $item['image'],
-					'caption' 		=> $item['caption'],
-					'description' 	=> $item['description'],
-					'type' 			=> $item['type']
+					'gallery_id' 	=> $gallery_id,
+					'attachment_id' => (int)$item['attachment_id'],
+					'image' 		=> ( isset($_POST['video']) ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : sanitize_text_field($item['image']),
+					'caption' 		=> sanitize_text_field($item['caption']),
+					'description' 	=> sanitize_text_field($item['description']),
+					'type' 			=> sanitize_text_field($item['type'])
 				],
 				[ '%d', '%d', '%s', '%s', '%s', '%s' ]
 			);
@@ -183,8 +185,17 @@ class wpmgAdmin {
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 
+		$item_id 		= (int)$_POST['id'];
+		$_caption 		= sanitize_text_field($_POST['caption']);
+		$_description 	= sanitize_text_field($_POST['description']);
+		$_type 			= sanitize_text_field($_POST['type']);
+		$_url 			= sanitize_text_field($_POST['url']);
+		$_tags 			= sanitize_text_field($_POST['tags']);
+		$_cta 			= esc_url_raw($_POST['cta']);
+		$_cta_text	 	= sanitize_text_field($_POST['cta_text']);
+		$_subscribe 	= sanitize_text_field($_POST['subscribe']);
+
 		// update post
-		$item_id 	= $_POST['id'];
 		$get_item 	= $wpdb->get_results("SELECT * FROM $item_tbl WHERE id = $item_id LIMIT 1");
 		if( count($get_item) == 1 ){
 			$get_item = $get_item[0];
@@ -193,37 +204,37 @@ class wpmgAdmin {
 			$update = $wpdb->update(
 				$item_tbl,
 				[
-					'caption' 		=> $_POST['caption'],
-					'description' 	=> $_POST['description'],
-					'type' 			=> $_POST['type'],
-					'url' 			=> $_POST['url'],
-					'tags' 			=> $_POST['tags'],
-					'cta' 			=> $_POST['cta'],
-					'cta_text' 		=> $_POST['cta_text'],
-					'subscribe' 	=> ($_POST['subscribe'] == 'true') ? 1 : 0,
+					'caption' 		=> $_caption,
+					'description' 	=> $_description,
+					'type' 			=> $_type,
+					'url' 			=> $_url,
+					'tags' 			=> $_tags,
+					'cta' 			=> $_cta,
+					'cta_text' 		=> $_cta_text,
+					'subscribe' 	=> ($_subscribe == 'true') ? 1 : 0,
 				],
-				[ 'id' => $_POST['id'] ],
+				[ 'id' => $item_id ],
 				[ '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d' ],
 				[ '%d' ]
 			);
 
-			if( isset($_POST['tags']) && strlen($_POST['tags']) > 1 )
-				$synch = wpmgAdmin::synch_item_tags( $_POST['id'], explode(',', $_POST['tags']) );
+			if( isset($_POST['tags']) && strlen($_tags) >= 1 )
+				$synch = wpmgAdmin::synch_item_tags( $item_id, explode(',', $_tags) );
 
 			/***********Update gPost*************/
 
-			if( $_POST['type'] == 'youtube' ){
+			if( $_type == 'youtube' ){
 				$post_content = '<div class="fitVids-wrapper">
-							<iframe width="1200" height="675" src="https://www.youtube.com/embed/'.$_POST['url'].'?controls=0&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="1200" height="675" src="https://www.youtube.com/embed/'.$_url.'?controls=0&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>';
-				$seo_image = 'https://i3.ytimg.com/vi/'.$_POST['url'].'/hqdefault.jpg';
-			} elseif ( $_POST['type'] == 'vimeo' ) {
+				$seo_image = 'https://i3.ytimg.com/vi/'.$_url.'/hqdefault.jpg';
+			} elseif ( $_type == 'vimeo' ) {
 				$post_content = '<div class="fitVids-wrapper">
-							<iframe src="https://player.vimeo.com/video/'.$_POST['url'].'?autoplay=1" width="1200" height="675" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+							<iframe src="https://player.vimeo.com/video/'.$_url.'?autoplay=1" width="1200" height="675" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 						</div>';
-				$seo_image = wpmgFront::getVimeoThumb($_POST['url']);
+				$seo_image = wpmgFront::getVimeoThumb($_url);
 			} else {
-				$post_content = '<img src="'.$get_item->image.'" alt="'.$_POST['caption'].'" style="max-width: 100%">';
+				$post_content = '<img src="'.$get_item->image.'" alt="'.$_caption.'" style="max-width: 100%">';
 				$seo_image = $get_item->image;
 			}
 
@@ -232,7 +243,7 @@ class wpmgAdmin {
 				// carete post
 				$putPost = wp_insert_post(
 					[
-						'post_title' 	=> wp_strip_all_tags( $_POST['caption'] ),
+						'post_title' 	=> wp_strip_all_tags( $_caption ),
 						'post_content'  => $post_content,
 	  					'post_status'   => 'publish',
 	  					'post_type'     => WPMG::$post_type,
@@ -250,12 +261,12 @@ class wpmgAdmin {
 					update_post_meta( $putPost, '_dt_header_title', 'disabled' );
 
 					// SEO Tags
-					update_post_meta( $putPost, '_yoast_wpseo_opengraph-title', wp_strip_all_tags( $_POST['caption'] ) );
-					update_post_meta( $putPost, '_yoast_wpseo_opengraph-description', wp_strip_all_tags( $_POST['description'].' ' . get_option('social-media-hastag') ) );
+					update_post_meta( $putPost, '_yoast_wpseo_opengraph-title', wp_strip_all_tags( $_caption ) );
+					update_post_meta( $putPost, '_yoast_wpseo_opengraph-description', wp_strip_all_tags( $_description.' ' . get_option('social-media-hastag') ) );
 					update_post_meta( $putPost, '_yoast_wpseo_opengraph-image', $seo_image );
 
-					update_post_meta( $putPost, '_yoast_wpseo_twitter-title', wp_strip_all_tags( $_POST['caption'] ) );
-					update_post_meta( $putPost, '_yoast_wpseo_twitter-description', wp_strip_all_tags( $_POST['description'].' ' . get_option('social-media-hastag') ) );
+					update_post_meta( $putPost, '_yoast_wpseo_twitter-title', wp_strip_all_tags( $_caption ) );
+					update_post_meta( $putPost, '_yoast_wpseo_twitter-description', wp_strip_all_tags( $_description.' ' . get_option('social-media-hastag') ) );
 					update_post_meta( $putPost, '_yoast_wpseo_twitter-image', $seo_image );
 				}
 			} else {
@@ -265,7 +276,7 @@ class wpmgAdmin {
 					$putPost = wp_update_post(
 						[
 							'ID' 			=> $get_item->post_id,
-							'post_title' 	=> wp_strip_all_tags( $_POST['caption'] ),
+							'post_title' 	=> wp_strip_all_tags( $_caption ),
 							'post_content'  => $post_content,
 		  					'post_status'   => 'publish',
 		  					'post_type'     => WPMG::$post_type,
@@ -273,12 +284,12 @@ class wpmgAdmin {
 					);
 
 					// SEO Tags
-					update_post_meta( $thePost->ID, '_yoast_wpseo_opengraph-title', wp_strip_all_tags( $_POST['caption'] ) );
-					update_post_meta( $thePost->ID, '_yoast_wpseo_opengraph-description', wp_strip_all_tags( $_POST['description'].' ' . get_option('social-media-hastag') ) );
+					update_post_meta( $thePost->ID, '_yoast_wpseo_opengraph-title', wp_strip_all_tags( $_caption ) );
+					update_post_meta( $thePost->ID, '_yoast_wpseo_opengraph-description', wp_strip_all_tags( $_description.' ' . get_option('social-media-hastag') ) );
 					update_post_meta( $thePost->ID, '_yoast_wpseo_opengraph-image', $seo_image );
 
-					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-title', wp_strip_all_tags( $_POST['caption'] ) );
-					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-description', wp_strip_all_tags( $_POST['description'].' ' . get_option('social-media-hastag') ) );
+					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-title', wp_strip_all_tags( $_caption ) );
+					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-description', wp_strip_all_tags( $_description.' ' . get_option('social-media-hastag') ) );
 					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-image', $seo_image );
 				}
 			}
@@ -288,7 +299,7 @@ class wpmgAdmin {
 			$putPost   = false;
 		}
 	
-		echo json_encode(['success' => $update, 'post' => $thePost]);
+		echo json_encode(['success' => $update, 'post' => $thePost, 'synch' => $synch]);
 		exit;
 	}
 
@@ -298,7 +309,7 @@ class wpmgAdmin {
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 		$delete = $wpdb->delete(
 			$item_tbl,
-			[ 'id' => $_POST['id'] ],
+			[ 'id' => (int)$_POST['id'] ],
 			[ '%d' ]
 		);
 		echo json_encode(['success' => $delete]);
@@ -309,10 +320,18 @@ class wpmgAdmin {
 		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$tag_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
+		$gallery_id = (int)$_POST['gallery_id'];
+		$getTags = $wpdb->get_results("SELECT * FROM $tag_tbl WHERE `gallery_id` = $gallery_id ORDER BY `wx_a_wpmg_gallery_tags`.`menu_order` ASC");
+		if( count($getTags) > 0 ) {
+			$lastNumber = array_pop($getTags);
+			$lastNumber = ++$lastNumber->menu_order;
+		} else {
+			$lastNumber = 1;
+		}
 		$insert = $wpdb->insert(
 			$tag_tbl,
-			[ 'title' => esc_html($_POST['title']), 'gallery_id' => (int)$_POST['gallery_id'] ],
-			[ '%s', '%d' ]
+			[ 'title' => sanitize_text_field($_POST['title']), 'gallery_id' => $gallery_id, 'menu_order' => $lastNumber ],
+			[ '%s', '%d', '%d' ]
 		);
 		echo json_encode(['success' => $insert, 'id' => $wpdb->insert_id]);
 		exit;
@@ -326,14 +345,14 @@ class wpmgAdmin {
 
 		$delete = $wpdb->delete(
 			$item_tbl,
-			[ 'id' => $_POST['id'] ],
+			[ 'id' => (int)$_POST['id'] ],
 			[ '%d' ]
 		);
 
 		// remove relations 
 		$trms = $wpdb->delete(
 			$tag_terms_tbl,
-			[ 'tag_id' => $_POST['id'] ],
+			[ 'tag_id' => (int)$_POST['id'] ],
 			[ '%d' ]
 		);
 
@@ -347,7 +366,7 @@ class wpmgAdmin {
 		$tag_tbl = $wpdb->prefix . 'a_wpmg_gallery';
 		$insert = $wpdb->insert(
 			$tag_tbl,
-			[ 'title' => $_POST['title'] ],
+			[ 'title' => sanitize_text_field($_POST['title']) ],
 			[ '%s' ]
 		);
 		echo json_encode(['success' => $insert, 'redirect' => get_admin_url().'/admin.php?page=wpm-gallery-add&id='.$wpdb->insert_id]);
@@ -361,12 +380,12 @@ class wpmgAdmin {
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 		$delete = $wpdb->delete(
 			$gall_tbl,
-			[ 'id' => $_POST['id'] ],
+			[ 'id' => (int)$_POST['id'] ],
 			[ '%d' ]
 		);
 
 		if( $delete )
-			$wpdb->delete( $item_tbl, [ 'gallery_id' => $_POST['id'] ], [ '%d' ] );
+			$wpdb->delete( $item_tbl, [ 'gallery_id' => (int)$_POST['id'] ], [ '%d' ] );
 
 		echo json_encode(['success' => $delete]);
 		exit;
@@ -378,8 +397,8 @@ class wpmgAdmin {
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$update = $wpdb->update(
 			$item_tbl,
-			[ 'title' => $_POST['title'] ],
-			[ 'id' 	  => $_POST['id'] ],
+			[ 'title' => sanitize_text_field($_POST['title']) ],
+			[ 'id' 	  => (int)$_POST['id'] ],
 			[ '%s' ],
 			[ '%d' ]
 		);
@@ -401,7 +420,7 @@ class wpmgAdmin {
 		$update = $wpdb->update(
 			$item_tbl,
 			[ 'first' => 1 ],
-			[ 'id' 	  => $_POST['id'] ],
+			[ 'id' 	  => (int)$_POST['id'] ],
 			[ '%d' ],
 			[ '%d' ]
 		);
@@ -412,38 +431,46 @@ class wpmgAdmin {
 
 	public static function wpmg_filter_settings_action(){
 		$meta = stripslashes_deep($_POST);
-		update_option('filter-wrapper-bg', $meta['filter-wrapper-bg'], false);
-		update_option('filter-text-color', $meta['filter-text-color'], false);
-		update_option('filter-bg-color', $meta['filter-bg-color'], false);
-		update_option('filter-border-color', $meta['filter-border-color'], false);
-		update_option('act-filter-text-color', $meta['act-filter-text-color'], false);
-		update_option('act-filter-bg-color', $meta['act-filter-bg-color'], false);
-		update_option('act-filter-border-color', $meta['act-filter-border-color'], false);
+		update_option('filter-wrapper-bg', sanitize_text_field($meta['filter-wrapper-bg']), false);
+		update_option('filter-text-color', sanitize_text_field($meta['filter-text-color']), false);
+		update_option('filter-bg-color', sanitize_text_field($meta['filter-bg-color']), false);
+		update_option('filter-border-color', sanitize_text_field($meta['filter-border-color']), false);
+		update_option('act-filter-text-color', sanitize_text_field($meta['act-filter-text-color']), false);
+		update_option('act-filter-bg-color', sanitize_text_field($meta['act-filter-bg-color']), false);
+		update_option('act-filter-border-color', sanitize_text_field($meta['act-filter-border-color']), false);
 		exit;
 	}
 
 	public static function wpmg_paginate_settings_action(){
 		$meta = stripslashes_deep($_POST);
-		update_option('paginate-text-color', $meta['paginate-text-color'], false);
-		update_option('paginate-bg-color', $meta['paginate-bg-color'], false);
-		update_option('act-paginate-text-color', $meta['act-paginate-text-color'], false);
-		update_option('act-paginate-bg-color', $meta['act-paginate-bg-color'], false);
+		update_option('paginate-text-color', sanitize_text_field($meta['paginate-text-color']), false);
+		update_option('paginate-bg-color', sanitize_text_field($meta['paginate-bg-color']), false);
+		update_option('act-paginate-text-color', sanitize_text_field($meta['act-paginate-text-color']), false);
+		update_option('act-paginate-bg-color', sanitize_text_field($meta['act-paginate-bg-color']), false);
 		exit;
 	}
 
 	public static function wpmg_general_settings_action(){
 		$meta = stripslashes_deep($_POST);
-		update_option('youtube-chaneel-id', $meta['youtube-chaneel-id'], false);
-		update_option('social-media-hastag', $meta['social-media-hastag'], false);
-		update_option('lightBoxType', $meta['lightBoxType'], false);
+		update_option('youtube-chaneel-id', sanitize_text_field($meta['youtube-chaneel-id']), false);
+		update_option('social-media-hastag', sanitize_text_field($meta['social-media-hastag']), false);
+		update_option('lightBoxType', sanitize_text_field($meta['lightBoxType']), false);
 		exit;
 	}
+
+	public static function wpmg_filter_alignment_action(){
+		$meta = stripslashes_deep($_POST);
+		update_option('wpmg-filter-align', sanitize_text_field($meta['align']), false);
+		exit;
+	}
+
+	
 
 	public static function wpmg_change_data_permission_action(){
 		$_POST = stripslashes_deep($_POST);
 		$update = false;
 		if( isset($_POST['id']) && $_POST['hasPermissiontoGData'] ){
-			$update = update_user_meta($_POST['id'], 'hasPermissiontoGData', $_POST['hasPermissiontoGData']);
+			$update = update_user_meta((int)$_POST['id'], 'hasPermissiontoGData', $_POST['hasPermissiontoGData']);
 		}
 		echo json_encode(['success' => $update]);
 		exit;
@@ -491,7 +518,7 @@ class wpmgAdmin {
 
 	public static function searchGalleryItems_action(){
 		$_GET 	= stripslashes_deep($_GET);
-		$string = filter_var($_GET['query'], FILTER_SANITIZE_STRING);
+		$string = sanitize_text_field($_GET['query']);
 		$gid    = (int)$_GET['gid'];
 		global $wpdb;
 		$items_tbl = $wpdb->prefix.'a_wpmg_gallery_items';
@@ -524,6 +551,5 @@ class wpmgAdmin {
 		echo json_encode($_POST);
 		exit;
 	}
-	
 	
 }

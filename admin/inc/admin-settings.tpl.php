@@ -42,6 +42,31 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
             </tbody>
         </table>
 
+        <h3>Filter Alignment</h3>
+        <table class="wpmgInnerTbl" style="margin: 20px auto 0;"> 
+            <tbody> 
+                <tr>    
+                    <td>Left Aligned Filters</td>
+                    <td class="">
+                        <input type="radio" id="left-aligned" name="filter-align" value="left-aligned" <?php if( get_option('wpmg-filter-align') == '' || get_option('wpmg-filter-align') == 'left-aligned' ) echo 'checked' ?>>
+                        <label for="left-aligned">
+                            <img src="<?php echo WPMG__URL ?>/admin/images/left-menu.png" alt="Left Alignment" width="" style="border: 1px solid #ccc; border-radius: 4px;">
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Center Aligned Filters</td>
+                    <td class="">
+                        <input type="radio" id="center-aligned" name="filter-align" value="center-aligned" <?php if( get_option('wpmg-filter-align') == 'center-aligned' ) echo 'checked' ?>>
+                        <label for="center-aligned">
+                            <img src="<?php echo WPMG__URL ?>/admin/images/center-menu.png" alt="Center Alignment" width="" style="border: 1px solid #ccc; border-radius: 4px;">
+                        </label>
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
+
         <h3>Filter Colors:</h3>
         <table class="wpmgInnerTbl" style="margin: 20px auto;"> 
             <tbody> 

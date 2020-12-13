@@ -137,7 +137,7 @@ a.pp_arrow_previous,a.pp_arrow_next{display:block;float:left;height:15px;margin-
 .pp_gallery{display:none;left:50%;margin-top:-50px;position:absolute;z-index:10000}
 .pp_gallery div{float:left;overflow:hidden;position:relative}
 .pp_gallery ul{float:left;height:35px;position:relative;white-space:nowrap;margin:0 0 0 5px;padding:0}
-.pp_gallery ul a{border:1px rgba(0,0,0,0.5) solid;display:block;float:left;height:33px;overflow:hidden}
+.pp_gallery ul a{display:block;float:left;overflow:hidden}
 .pp_gallery ul a img{border:0}
 .pp_gallery li{display:block;float:left;margin:0 5px 0 0;padding:0}
 .pp_gallery li.default a{background:url(../images/prettyPhoto/facebook/default_thumbnail.gif) 0 0 no-repeat;display:block;height:33px;width:50px}
@@ -203,7 +203,7 @@ a.wpmgcta:hover{opacity:.8; color: #fff;}
 .pp_content > div > a.pp_close:after{content:" ";width:4px;background:#000;height:28px;position:absolute;left:50%;top:50%;transform:rotate(-45deg);margin-top:-14px;margin-left:-2px}
 .pp_content > div > a.pp_close:hover{transform:scale(1.2);opacity:.8;transition:transform 500ms}
 .pp_content > div > a.pp_expand{right:10px}
-.pp_content .pp_description{font-size:17px;line-height:22px;margin:0 0 14px!important;color:#000;float:left;width:100%;height:25px;overflow:hidden}
+.pp_content .pp_description{font-size:17px;line-height:22px;margin:0 0 14px!important;color:#000;float:left;width:100%;overflow:hidden}
 .fc-facebook,.fc-twitter{background:url(../images/wpm-social-networks-logos.png);height:22px;width:22px;float:left}
 i.fc-twitter{background-position:-39px -5px}
 i.fc-facebook{background-position:-6px -5px}
@@ -217,16 +217,16 @@ i.fc-facebook{background-position:-6px -5px}
 .mixitup_menu_sort .svg-icon{font-size:1rem;position:absolute;width:1rem;height:1rem;margin:-.5rem 0 0 -.5rem;top:50%;left:50%}
 .svg-icon polyline{stroke:#fff;stroke-width:12}
 .svg-icon path{fill:#fff}
-.wpmg-filter button{margin:0 2px;color:#FFF;background:#616161;font-weight:100;font-size:14px;text-transform:none;letter-spacing:.046875em;line-height:1;padding:.84375em .875em .78125em;border-radius:2px;border:none}
+.wpmg-filter button{margin:0 2px;color:#FFF;background:#616161;font-weight:100;font-size:16px;text-transform:none;letter-spacing:-.01em;line-height:1;padding:.625em .875em .625em;border-radius:2px;border:none}
 .wpmg-filter button:focus{outline:none}
 .mixitup-control-active .svg-icon polyline{stroke:#333}
 .mixitup-control-active .svg-icon path{fill:#333}
-.wpmg-dark button.mixitup-control{background:#616161;height:36px;line-height:12px;padding:12px 14px}
+.wpmg-dark button.mixitup-control{background:#616161;line-height:12px;padding:12px 14px}
 .mixitup-state{display:grid;justify-content:center;text-align:center;grid-template-columns:calc(100% - 110px) 100px;grid-column-gap:10px;align-items:center;margin-top:-20px}
 .mixitup-page-list{margin-right:-100px}
 .mixitup-page-stats{font-size:12px}
 .mixitup_menu_group.mixitup_menu_dropdown{display:none}
-#wpmg-filter-dropdown{width:calc(100% - 4px);height:36px;border:none;background:#616161;color:#fff !important;padding:2px 6px;margin:0 auto}
+#wpmg-filter-dropdown{width:calc(100% - 4px);border:none;background-color:#616161;color:#fff !important;padding:2px 6px;margin:0 auto}
 button.control.mixitup-control-active{background:red;color:#000}
 .mixitup_menu_dropdown{display:block;text-align:center}
 #wpmg-filter-dropdown:focus{outline:1px solid #fff}

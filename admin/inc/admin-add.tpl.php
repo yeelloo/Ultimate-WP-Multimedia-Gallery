@@ -1,8 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
-
 wp_enqueue_media();
-
 global $wpdb;
 $gallery_id = (isset($_GET['id'])) ? (int)$_GET['id'] : 0;
 
@@ -17,13 +15,9 @@ if( count($gall_result) != 1 ){
 	echo '<script>var wpmgTriggerNewGallery = true</script>';
 } else {
 	echo '<script>var wpmgalleries = '. json_encode($gall_result).'; var gallery_id = '.$gallery_id.'</script>';
-
-
 	$isTag = ( isset($_GET['tag']) && (int)$_GET['tag'] > 0 ) ? true : false;
 
-
 	// 1. Get the current page number
-	
 	$pageno = (isset($_GET['pageno'])) ? $_GET['pageno'] : 1;
 
 	// 2. The formula for php pagination
@@ -58,10 +52,7 @@ if( count($gall_result) != 1 ){
 	}
 	
 	$gall_item_result = $wpdb->get_results($sql);
-	// echo $wpdb->last_query;
-	// exit;
 	echo '<script>var wpmgItems = '. json_encode($gall_item_result).'</script>';
-
 
 	// get tags
 	$_gallery_tags = $wpdb->prefix . 'a_wpmg_gallery_tags';
@@ -315,6 +306,7 @@ jQuery(function($){
 	        `;
 
 	        $('.galleryItemTable').html(_html)
+	        $('a.btn.button.active-tag').removeClass('active-tag');
 	    }
 	});
 
@@ -452,7 +444,7 @@ jQuery(function($){
 		else
 			$('#tbl-wpmg').removeClass('busy')
 	}
-	
+
 	jQuery('html').on('click', '.wpmgAddVideoToGallery', function(event) {
 		event.preventDefault();
 
@@ -500,13 +492,5 @@ function countChar(val) {
 </script>
 
 <style>
-span.charNum {
-    float: right;
-    background: #007cba;
-    padding: 0 3px;
-    font-size: 14px;
-    color: #fff;
-    font-weight: 500;
-    margin-top: -5px;
-}
+span.charNum {float: right; background: #007cba; padding: 0 3px; font-size: 14px; color: #fff; font-weight: 500; margin-top: -5px; }
 </style>

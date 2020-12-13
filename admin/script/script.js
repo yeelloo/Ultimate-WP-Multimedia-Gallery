@@ -128,8 +128,8 @@ let wpmgAPP = (function($){
 				{
 					action			: 'wpmg_update_item_ajax',
 					id 				: _this.attr('data-id'),
-					caption 		: $(`textarea[name="caption[${_id}][]"]`).val(),
-					description 	: $(`textarea[name="description[${_id}][]"]`).val(),
+					caption 		: $(`textarea[name="caption[${_id}][]"]`).val().replace(/"/g, '`'),
+					description 	: $(`textarea[name="description[${_id}][]"]`).val().replace(/"/g, '`'),
 					type : $(`select[name="type[${_id}][]"]`).val(),
 					url  : $(`input[name="url[${_id}][]"]`).val(),
 					tags : $(`input[name="tagsInput[${_id}][]"]`).val(),
@@ -139,7 +139,8 @@ let wpmgAPP = (function($){
 				}, 
 			function(data, textStatus, xhr) 
 			{
-				
+				$(`textarea[name="caption[${_id}][]"]`).val($(`textarea[name="caption[${_id}][]"]`).val().replace(/"/g, '`'))
+				$(`textarea[name="description[${_id}][]"]`).val($(`textarea[name="description[${_id}][]"]`).val().replace(/"/g, '`'))
 			});
 			
 			_busy(false, _this)
@@ -186,8 +187,8 @@ let wpmgAPP = (function($){
 				                <td data-title="Name">${_val}</td>
 				                <td data-title="Name"><input type="radio" name="default-tag" data-id="${_data.id}" value="${_data.id}" class="default-tag"</td>
 				                <td data-title="Action" class="actions">
-				                    <a href="#" data-id="${_data.id}" data-title="${_val}" class="button edit-wpmgTag">Edit</a>
 				                    <a href="#" data-id="${_data.id}" class="button delete-wpmgTag">Delete</a>
+				                    <a href="#" data-id="${_data.id}" data-title="${_val}" class="button edit-wpmgTag">Edit</a>
 				                </td>
 				            </tr>
 						`;
@@ -398,6 +399,19 @@ let wpmgAPP = (function($){
 			});
 			_this.closest('.wpmgInnerTbl').removeClass('busy')
 		});
+
+		$('html').on('change', 'input[name="filter-align"]', async function(event) {
+			event.preventDefault()
+			let _this = $(this)
+
+			_this.closest('.wpmgInnerTbl').addClass('busy')
+			await $.post(wpmg.ajax, { 
+				action : 'wpmg_filter_alignment_ajax',
+				'align' : _this.val()
+			});
+			_this.closest('.wpmgInnerTbl').removeClass('busy')
+		});
+
 	}
 
 	let changePermissions = function(){

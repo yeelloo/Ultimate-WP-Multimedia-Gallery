@@ -21,7 +21,7 @@ class WPMG {
 	private static $initiated = false;
 	private static $_db_version = '1.0';
 	public static $post_type = 'uwmg';
-	public static $licenced = false;
+	public static $licenced = true;
 
 	public static function init() {
 		if ( ! self::$initiated && !class_exists('UWMGPRO') ) {
