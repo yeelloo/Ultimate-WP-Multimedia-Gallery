@@ -72,7 +72,9 @@ let wpmgApp = (function($){
 	                jQuery('.wpmg-filter button[data-filter=".'+galleryHashArr[1]+'"]').click()
 	            }
 	        } else {
-	        	jQuery('.wpmg-filter .default-tag').trigger('click')
+	        	jQuery('.wpmg-filter').each(function(i,e){
+		        	jQuery(e).find('.default-tag').trigger('click')
+		        })
 	        }
 		}, 1000)
 		jQuery('.wpmg-wrap').removeClass('wpmg-loading')
@@ -217,29 +219,41 @@ let wpmgApp = (function($){
 	}
 
 	let _initMixItUp = function(){
-		var containerEl = document.querySelector('.gcontainer');
-		var mixer = mixitup(containerEl, {
-		    animation: {
-		        animateResizeContainer: false // required to prevent column algorithm bug
-		    },
-		    pagination: {
-		        limit: 20,
-		        maintainActivePage: false,
-		        loop: true,
-		        hidePageListIfSinglePage: true
-		    },
-		    callbacks: {
-		        onMixEnd: function(state) {
-		            var FilterItem = jQuery('.mixitup-control-active').attr('data-filter');
-		            if( FilterItem.length > 0 ){
-		                FilterItem = FilterItem.replace('.', '');
-		                setHashtag('wpmGallFilter='+FilterItem);
-		                // Change dropdown
-		                jQuery('#wpmg-filter-dropdown').val(`.${FilterItem}`)
-		            }
-		        }
-		    }
-		});
+		// var containerEl = document.querySelector('.gcontainer');
+		jQuery('.wpmfgmixer').each(function(i,e){
+			var _id = jQuery(e).attr('data-id')
+			var mixer = mixitup(e, {
+				controls: {
+			        scope: 'local',
+			    },
+			    animation: {
+			        animateResizeContainer: true // required to prevent column algorithm bug
+			    },
+			    selectors: {
+			        target: '.mix',
+			        pageList : `.mixitup-page-list-${_id}`,
+			        pageStats : `.mixitup-page-stats-${_id}`,
+			    },
+			    pagination: {
+			        limit: 20,
+			        maintainActivePage: true,
+			        loop: true,
+			        hidePageListIfSinglePage: true,
+			    },
+			    callbacks: {
+			        onMixEnd: function(state) {
+			            var FilterItem = jQuery('.mixitup-control-active').attr('data-filter');
+			            if( FilterItem.length > 0 ){
+			                FilterItem = FilterItem.replace('.', '');
+			                setHashtag('wpmGallFilter='+FilterItem);
+			                // Change dropdown
+			                jQuery('#wpmg-filter-dropdown').val(`.${FilterItem}`)
+			            }
+			        }
+			    }
+			});
+		})
+		
 
 		jQuery('html').on('click', '#wpmg-filter-dropdown', function(event) {
 			event.preventDefault();

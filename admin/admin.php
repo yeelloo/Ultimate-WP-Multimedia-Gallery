@@ -41,7 +41,6 @@ class wpmgAdmin {
 		add_action( 'wp_ajax_searchGalleryItems', ['wpmgAdmin', 'searchGalleryItems_action'] );
 
 		SELF::plugin_activation();
-
 		
 	}
 
@@ -158,7 +157,10 @@ class wpmgAdmin {
 	public static function wpmg_save_gallery_items(){
 		$_POST = stripslashes_deep($_POST);
 		$items = (is_array($_POST['itemObj'])) ? $_POST['itemObj'] : [];
+		$ids   = (int)$_POST['ids'];
 		$gallery_id = (int)$_POST['gallery_id'];
+		$video 		= (isset($_POST['video']) && $_POST['video'] == 'true') ? true : false;
+
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 		foreach ($items as $key => $item) {
@@ -167,16 +169,15 @@ class wpmgAdmin {
 				[
 					'gallery_id' 	=> $gallery_id,
 					'attachment_id' => (int)$item['attachment_id'],
-					'image' 		=> ( isset($_POST['video']) ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : sanitize_text_field($item['image']),
+					'image' 		=> ( $video ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : sanitize_text_field($item['image']),
 					'caption' 		=> sanitize_text_field($item['caption']),
 					'description' 	=> sanitize_text_field($item['description']),
 					'type' 			=> sanitize_text_field($item['type'])
 				],
 				[ '%d', '%d', '%s', '%s', '%s', '%s' ]
 			);
-			$items[$key]['id'] = $wpdb->insert_id;
 		}
-		echo json_encode(['success' => true, 'items' => $items, (int)$_POST['ids']]);
+		echo json_encode([ 'success' => true ]);
 		exit;
 	}
 
@@ -194,6 +195,10 @@ class wpmgAdmin {
 		$_cta 			= esc_url_raw($_POST['cta']);
 		$_cta_text	 	= sanitize_text_field($_POST['cta_text']);
 		$_subscribe 	= sanitize_text_field($_POST['subscribe']);
+
+		$synch   = [];
+		$update  = false;
+		$putPost = false;
 
 		// update post
 		$get_item 	= $wpdb->get_results("SELECT * FROM $item_tbl WHERE id = $item_id LIMIT 1");
@@ -218,7 +223,7 @@ class wpmgAdmin {
 				[ '%d' ]
 			);
 
-			if( isset($_POST['tags']) && strlen($_tags) >= 1 )
+			if( strlen($_tags) >= 1 )
 				$synch = wpmgAdmin::synch_item_tags( $item_id, explode(',', $_tags) );
 
 			/***********Update gPost*************/
@@ -250,11 +255,7 @@ class wpmgAdmin {
 					]
 				);
 				if( $putPost ){
-					$wpdb->update(
-						$item_tbl,
-						[ 'post_id' => $putPost ],
-						[ 'id' => $item_id ]
-					);
+					$wpdb->update( $item_tbl, [ 'post_id' => $putPost ], [ 'id' => $item_id ] );
 
 					update_post_meta( $putPost, '_wp_page_template', 'template-microsite.php' );
 					update_post_meta( $putPost, '_dt_sidebar_position', 'disabled' );
@@ -293,13 +294,9 @@ class wpmgAdmin {
 					update_post_meta( $thePost->ID, '_yoast_wpseo_twitter-image', $seo_image );
 				}
 			}
-		} else {
-			$update = false;
-			$synch  = [];
-			$putPost   = false;
 		}
 	
-		echo json_encode(['success' => $update, 'post' => $thePost, 'synch' => $synch]);
+		echo json_encode(['success' => $update, 'synch' => $synch]);
 		exit;
 	}
 
@@ -307,11 +304,7 @@ class wpmgAdmin {
 		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
-		$delete = $wpdb->delete(
-			$item_tbl,
-			[ 'id' => (int)$_POST['id'] ],
-			[ '%d' ]
-		);
+		$delete = $wpdb->delete( $item_tbl, [ 'id' => (int)$_POST['id'] ], [ '%d' ] );
 		echo json_encode(['success' => $delete]);
 		exit;
 	}
@@ -319,18 +312,18 @@ class wpmgAdmin {
 	public static function wpmg_add_tags_action(){
 		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
-		$tag_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
+		$tag_tbl 	= $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$gallery_id = (int)$_POST['gallery_id'];
-		$getTags = $wpdb->get_results("SELECT * FROM $tag_tbl WHERE `gallery_id` = $gallery_id ORDER BY `wx_a_wpmg_gallery_tags`.`menu_order` ASC");
+		$title 		= sanitize_text_field($_POST['title']);
+		$getTags 	= $wpdb->get_results("SELECT * FROM $tag_tbl WHERE `gallery_id` = $gallery_id ORDER BY `wx_a_wpmg_gallery_tags`.`menu_order` ASC");
 		if( count($getTags) > 0 ) {
 			$lastNumber = array_pop($getTags);
 			$lastNumber = ++$lastNumber->menu_order;
 		} else {
 			$lastNumber = 1;
 		}
-		$insert = $wpdb->insert(
-			$tag_tbl,
-			[ 'title' => sanitize_text_field($_POST['title']), 'gallery_id' => $gallery_id, 'menu_order' => $lastNumber ],
+		$insert = $wpdb->insert( $tag_tbl,
+			[ 'title' => $title, 'gallery_id' => $gallery_id, 'menu_order' => $lastNumber ],
 			[ '%s', '%d', '%d' ]
 		);
 		echo json_encode(['success' => $insert, 'id' => $wpdb->insert_id]);
@@ -343,18 +336,10 @@ class wpmgAdmin {
 		$item_tbl 		= $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$tag_terms_tbl 	= $wpdb->prefix . 'a_wpmg_gallery_item_tag_terms';
 
-		$delete = $wpdb->delete(
-			$item_tbl,
-			[ 'id' => (int)$_POST['id'] ],
-			[ '%d' ]
-		);
+		$delete = $wpdb->delete( $item_tbl, [ 'id' => (int)$_POST['id'] ], [ '%d' ] );
 
 		// remove relations 
-		$trms = $wpdb->delete(
-			$tag_terms_tbl,
-			[ 'tag_id' => (int)$_POST['id'] ],
-			[ '%d' ]
-		);
+		$trms = $wpdb->delete( $tag_terms_tbl, [ 'tag_id' => (int)$_POST['id'] ], [ '%d' ] );
 
 		echo json_encode(['success' => $delete]);
 		exit;
@@ -364,11 +349,8 @@ class wpmgAdmin {
 		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$tag_tbl = $wpdb->prefix . 'a_wpmg_gallery';
-		$insert = $wpdb->insert(
-			$tag_tbl,
-			[ 'title' => sanitize_text_field($_POST['title']) ],
-			[ '%s' ]
-		);
+		$title   = sanitize_text_field($_POST['title']);
+		$insert = $wpdb->insert( $tag_tbl, [ 'title' => $title ], [ '%s' ] );
 		echo json_encode(['success' => $insert, 'redirect' => get_admin_url().'/admin.php?page=wpm-gallery-add&id='.$wpdb->insert_id]);
 		exit;
 	}
@@ -378,11 +360,7 @@ class wpmgAdmin {
 		global $wpdb;
 		$gall_tbl = $wpdb->prefix . 'a_wpmg_gallery';
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
-		$delete = $wpdb->delete(
-			$gall_tbl,
-			[ 'id' => (int)$_POST['id'] ],
-			[ '%d' ]
-		);
+		$delete = $wpdb->delete( $gall_tbl, [ 'id' => (int)$_POST['id'] ], [ '%d' ] );
 
 		if( $delete )
 			$wpdb->delete( $item_tbl, [ 'gallery_id' => (int)$_POST['id'] ], [ '%d' ] );
@@ -395,36 +373,24 @@ class wpmgAdmin {
 		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
-		$update = $wpdb->update(
-			$item_tbl,
-			[ 'title' => sanitize_text_field($_POST['title']) ],
-			[ 'id' 	  => (int)$_POST['id'] ],
-			[ '%s' ],
-			[ '%d' ]
-		);
+		$title    = sanitize_text_field($_POST['title']);
+		$update = $wpdb->update( $item_tbl, [ 'title' => $title ], [ 'id' 	  => (int)$_POST['id'] ], [ '%s' ], [ '%d' ] );
 		echo json_encode(['success' => $update]);
 		exit;
 	}
 
 	public static function wpmg_update_default_tags_action(){
 		$_POST = stripslashes_deep($_POST);
+		$tagId = (int)$_POST['id'];
+		$gId   = (int)$_POST['_gid'];
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
-
-		$find  = $wpdb->get_results(" SELECT * FROM  $item_tbl   WHERE `first` = 1");
-		
+		$find  = $wpdb->get_results(" SELECT * FROM  $item_tbl WHERE `first` = 1 AND gallery_id = $gId");
 		foreach ($find as $key => $defaultTags) {
 			$wpdb->update( $item_tbl, [ 'first' => 0 ], [ 'id' 	  => $defaultTags->id ], [ '%d' ], [ '%d' ] );
 		}
-
-		$update = $wpdb->update(
-			$item_tbl,
-			[ 'first' => 1 ],
-			[ 'id' 	  => (int)$_POST['id'] ],
-			[ '%d' ],
-			[ '%d' ]
-		);
-		echo json_encode(['success' => $update]);
+		$update = $wpdb->update( $item_tbl, [ 'first' => 1 ], [ 'id' => $tagId, 'gallery_id' => $gId ], [ '%d' ], [ '%d', '%d' ] );
+		echo json_encode(['success' => $update, $wpdb->last_query]);
 		exit;
 	}
 
@@ -464,8 +430,6 @@ class wpmgAdmin {
 		exit;
 	}
 
-	
-
 	public static function wpmg_change_data_permission_action(){
 		$_POST = stripslashes_deep($_POST);
 		$update = false;
@@ -475,21 +439,6 @@ class wpmgAdmin {
 		echo json_encode(['success' => $update]);
 		exit;
 	}
-
-	public static function get_user_hasPermissiontoGData(){
-		global $wpdb;
-		$usermeta = $wpdb->prefix . 'usermeta';
-
-		$allUsers  = $wpdb->get_results(" SELECT user_id FROM  $usermeta WHERE `meta_key` LIKE 'hasPermissiontoGData' AND `meta_value` LIKE 'true'");
-		$allUserIds = [];
-		foreach ($allUsers as $key => $value) {
-			array_push($allUserIds, $value->user_id);
-		}
-		$defaultSuperuser = 1;
-		array_push($allUserIds, $defaultSuperuser);
-		return $allUserIds;
-	}
-
 
 	public static function synch_item_tags($item_id = 0, $tags = [1,5]){
 		if( $item_id == 0 || count($tags) == 0 ) return false;
@@ -509,10 +458,7 @@ class wpmgAdmin {
 			else
 				$queryStr .= "(NULL, $item_id, $t), ";
 		}
-
 		return $wpdb->query($queryStr);
-		// return $wpdb->last_query;
-
 	}
 
 
@@ -539,16 +485,18 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_update_filter_order_action(){
+		if( !WPMG::$licenced )
+			echo json_encode( ['success' => false] );
 		$_POST 	= stripslashes_deep($_POST);
 		global $wpdb;
 		$tags_table = $wpdb->prefix . 'a_wpmg_gallery_tags';
 
-
 		$orderList = $_POST['orderList'];
-		foreach ($orderList as $key => $value) {
-			$wpdb->update( $tags_table, ['menu_order' => $key + 1], ['id' => $value]);
-		}
-		echo json_encode($_POST);
+		if( is_array($orderList) )
+			foreach ($orderList as $key => $value) 
+				$wpdb->update( $tags_table, ['menu_order' => $key + 1], ['id' => $value]);
+			
+		echo json_encode( ['success' => true] );
 		exit;
 	}
 	

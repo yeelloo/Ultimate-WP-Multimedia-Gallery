@@ -210,6 +210,7 @@ i.fc-facebook{background-position:-6px -5px}
 .pp_social .facebook,.pp_social .twitter{width:auto;margin:0;padding-right:4px}
 .pp_social{clear:left}
 .pp_fade{overflow:hidden}
+.wpmfgmixer .targets{padding-top: 25px;}
 .wpmg-filter.controls{background:#333;border-radius:3px;padding:8px 7px;overflow:hidden;text-align:left}
 .mixitup_menu_group{display:inline-block}
 .mixitup_menu_group.mixitup_menu_sort{display:flex;float:right}
@@ -278,6 +279,7 @@ button.mixitup-control.mixitup-control-active{background:#3c3c3c}
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    border: 1px solid #becddb;
 }
 
 .mix:before {
@@ -307,16 +309,15 @@ button.mixitup-control.mixitup-control-active{background:#3c3c3c}
 }
 
 .wpmfgmixer .mix > a {
-    height: 100%;
+    height: calc(100% - 4px);
     position: absolute;
     top: 0;
-    width: 100%;
-    margin: 0;
+    width: calc(100% - 4px);
+    margin: 2px;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     color: #fff;
-    border: 1px solid #becddb;
     box-sizing: border-box;
 }
 

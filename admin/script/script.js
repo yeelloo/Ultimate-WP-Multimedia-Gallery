@@ -271,9 +271,10 @@ let wpmgAPP = (function($){
 			event.preventDefault()
 			let _this 	= $(this)
 			let _id 	= _this.attr('data-id')
+			let _gid	= $('#gallery_id').val()
 
 			_busy(true, _this)
-			await $.post(wpmg.ajax, { action : 'wpmg_update_default_tags_ajax', id : _id });
+			await $.post(wpmg.ajax, { action : 'wpmg_update_default_tags_ajax', id : _id, _gid : _gid });
 			_busy(false, _this)
 		});
 	}

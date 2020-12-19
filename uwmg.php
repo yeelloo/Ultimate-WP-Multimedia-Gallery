@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
 
 if( !class_exists('UWMGPRO') ){
 	define( 'WPMG_VERSION', '1.0' );
-	define( 'WPMG_MINIMUM_WP_VERSION', '4.5' );
+	define( 'WPMG_MINIMUM_WP_VERSION', '4.7' );
 	define( 'WPMG__DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WPMG__URL', plugins_url( '',__FILE__ ) );
 }
@@ -88,11 +88,9 @@ class WPMG {
 	        'taxonomies'         => [], // array( 'category', 'post_tag' ),
 	        'show_in_rest'       => false
 	    );
-	      
+	    
 	    register_post_type( WPMG::$post_type, $args );
 	}
 }
-
-
 add_action( 'init', array( 'WPMG', 'init' ) );
 

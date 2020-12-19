@@ -49,7 +49,7 @@ class wpmgFront {
 		        'hashtag'  => get_option('social-media-hastag'),
 		        'youtubeChaneelId' => get_option('youtube-chaneel-id'),
 		        'lightBoxType' => get_option('lightBoxType'),
-		        'isPro' => (WPMG::$licenced) ? 'true' : 'false'
+		        'isPro' => 'false'
 		    )
 		);
 		return ob_get_clean();
@@ -60,7 +60,7 @@ class wpmgFront {
 		$_wpmg_gallery_tags = $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$get_tags = $wpdb->get_results(" SELECT * FROM  $_wpmg_gallery_tags WHERE gallery_id = $gallery_id  ORDER BY $_wpmg_gallery_tags.`menu_order` ASC");
 		?>
-		<div class="wpmg-filter controls <?php echo get_option('wpmg-filter-align') ?>">
+		<div class="wpmg-filter controls <?php echo get_option('wpmg-filter-align') ?> wpmg-filter-<?php echo $gallery_id ?>">
 			<div class="mixitup_menu_group">
 				<button type="button" class="control" data-filter="all">Show All</button>
 				<?php foreach ($get_tags as $key => $tag) {

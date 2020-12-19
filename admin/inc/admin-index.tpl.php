@@ -3,12 +3,7 @@ if (!defined('ABSPATH')) exit;
 
 global $wpdb;
 $_wpmg_gallery = $wpdb->prefix . 'a_wpmg_gallery';
-$galleries = $wpdb->get_results(" SELECT * FROM  $_wpmg_gallery");
-
-// $permissionList = wpmgAdmin::get_user_hasPermissiontoGData();
-// if( array_search( get_current_user_id(), $permissionList) == false ){
-// 	die('Access denied');
-// }
+$galleries = $wpdb->get_results("SELECT * FROM  $_wpmg_gallery");
 ?>
 
 <div id="wpmg_wrap">

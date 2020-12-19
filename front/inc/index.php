@@ -9,90 +9,96 @@ $gall_items = $wpdb->get_results(" SELECT * FROM  $_a_wpmg_gallery_items where g
 
 
 if( count($gall_items) > 0 ) :
-	echo "<div class='wpmg-wrap wpmg-dark wpmg-loading'>";
+	echo "<div class='wpmg-wrap wpmg-dark wpmg-loading' id='uwmg-{$_id}'>";
 	include 'loading-spinner.tpl.php';
-	if( !isset($attr['filter']) )
-		wpmgFront::wpmg_get_filters($_id)
 ?>
 
-	<div class="wpmfgmixer gcontainer">
-	<?php foreach ($gall_items as $key => $item) :
-		if( $item->type == 'youtube' && (int)$item->attachment_id > 0 )
-		{
-			echo '
-			<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . ' " comboY data-id="'.$item->id.'">
-				<a href="https://www.youtube.com/watch?v='.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
-				data-subs="'.$item->subscribe.'"  data-post="'.get_the_permalink($item->post_id).'"
-					class="lozad"
-					data-background-image="'.$item->image.'"
-				>
-					
-				</a>
-			</div>';
-		}
-		elseif( $item->type == 'vimeo' && (int)$item->attachment_id > 0 )
-		{
-			echo '
-			<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" comboV data-id="'.$item->id.'">
-				<a href="https://vimeo.com/'.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
-				data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
-					class="lozad"
-					data-background-image="'.$item->image.'"
-				>
-					
-				</a>
-			</div>';
-		}
-		elseif( $item->type == 'youtube' && (int)$item->attachment_id == 0 )
-		{
-			$image = 'https://i3.ytimg.com/vi/'.$item->url.'/hqdefault.jpg'; //maxresdefault
-			echo '
-			<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" youtube data-id="'.$item->id.'">
-				<a href="https://www.youtube.com/watch?v='.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
-				data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
-					class="lozad"
-					data-background-image="'.$image.'"
-				>
-					
-				</a>
-			</div>';
-		} 
-		elseif ( $item->type == 'vimeo' && (int)$item->attachment_id == 0 ) 
-		{
-			$image = SELF::getVimeoThumb($item->url);
-			echo '
-			<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" vimeo data-id="'.$item->id.'">
-				<a href="https://vimeo.com/'.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
-				data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
-					class="lozad"
-					data-background-image="'.$image.'"
-				>
-					
-				</a>
-			</div>';
-		} 
-		else
-		{
-			echo '
-			<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" iamge data-id="'.$item->id.'">
-				<a href="'.$item->image.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
-				data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
-					class="lozad"
-					data-background-image="'.$item->image.'"
-				>
-					
-				</a>
-			</div>';
-		}
-	endforeach; ?>
-		<div class="gap"></div>
-		<div class="gap"></div>
-		<div class="gap"></div>
-		<div class="gap"></div>
-	</div>
-	<div class="mixitup-state">
-		<div class="mixitup-page-list"></div>
-		<div class="mixitup-page-stats"></div>
+	<div class="wpmfgmixer gcontainer <?php echo 'wpmg-'.$_id ?>" data-id="<?php echo $_id ?>">
+		<?php 
+		if( !isset($attr['filter']) )
+			wpmgFront::wpmg_get_filters($_id)
+		?>
+		<div class="targets">
+			<?php foreach ($gall_items as $key => $item) :
+				if( $item->type == 'youtube' && (int)$item->attachment_id > 0 )
+				{
+					echo '
+					<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . ' " comboY data-id="'.$item->id.'">
+						<a href="https://www.youtube.com/watch?v='.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
+						data-subs="'.$item->subscribe.'"  data-post="'.get_the_permalink($item->post_id).'"
+							class="lozad"
+							data-background-image="'.$item->image.'"
+						>
+							
+						</a>
+					</div>';
+				}
+				elseif( $item->type == 'vimeo' && (int)$item->attachment_id > 0 )
+				{
+					echo '
+					<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" comboV data-id="'.$item->id.'">
+						<a href="https://vimeo.com/'.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
+						data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
+							class="lozad"
+							data-background-image="'.$item->image.'"
+						>
+							
+						</a>
+					</div>';
+				}
+				elseif( $item->type == 'youtube' && (int)$item->attachment_id == 0 )
+				{
+					$image = 'https://i3.ytimg.com/vi/'.$item->url.'/hqdefault.jpg'; //maxresdefault
+					echo '
+					<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" youtube data-id="'.$item->id.'">
+						<a href="https://www.youtube.com/watch?v='.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
+						data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
+							class="lozad"
+							data-background-image="'.$image.'"
+						>
+							
+						</a>
+					</div>';
+				} 
+				elseif ( $item->type == 'vimeo' && (int)$item->attachment_id == 0 ) 
+				{
+					$image = SELF::getVimeoThumb($item->url);
+					echo '
+					<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" vimeo data-id="'.$item->id.'">
+						<a href="https://vimeo.com/'.$item->url.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
+						data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
+							class="lozad"
+							data-background-image="'.$image.'"
+						>
+							
+						</a>
+					</div>';
+				} 
+				else
+				{
+					echo '
+					<div class="mix '.$item->type.' '. wpmgFront::wpmg_get_tag_ref($item->tags) . '" iamge data-id="'.$item->id.'">
+						<a href="'.$item->image.'?rel=0&width=940&height=528" ref="ref-'.$item->id.'" rel="pp['.$item->type.']" title="'.$item->description.'-id-'.$item->id.'" caption="'.$item->caption.'" data-cta-link="'.$item->cta.'" data-cta-text="'.$item->cta_text.'" 
+						data-subs="'.$item->subscribe.'" data-post="'.get_the_permalink($item->post_id).'"
+							class="lozad"
+							data-background-image="'.$item->image.'"
+						>
+							
+						</a>
+					</div>';
+				}
+			endforeach; ?>
+			<div class="gap"></div>
+			<div class="gap"></div>
+			<div class="gap"></div>
+			<div class="gap"></div>
+		</div>
+		
+		<div class="mixitup-state mixitup-state-<?php echo $_id ?>">
+			<div class="mixitup-page-list mixitup-page-list-<?php echo $_id ?>"></div>
+			<div class="mixitup-page-stats mixitup-page-stats-<?php echo $_id ?>"></div>
+		</div>
+		
 	</div>
 	
 	<div class="wpmgEnd" data-id="<?php echo $_id ?>"></div>
