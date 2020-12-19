@@ -2,12 +2,6 @@
 //silance
 if (!defined('ABSPATH')) exit;
 
-$_id = (int)$attr['id'];
-global $wpdb;
-$_a_wpmg_gallery_items = $wpdb->prefix . 'a_wpmg_gallery_items';
-$gall_items = $wpdb->get_results(" SELECT * FROM  $_a_wpmg_gallery_items where gallery_id = {$_id} ORDER BY $_a_wpmg_gallery_items.`id` DESC");
-
-
 if( count($gall_items) > 0 ) :
 	echo "<div class='wpmg-wrap wpmg-dark wpmg-loading' id='uwmg-{$_id}'>";
 	include 'loading-spinner.tpl.php';
@@ -98,7 +92,7 @@ if( count($gall_items) > 0 ) :
 			<div class="mixitup-page-list mixitup-page-list-<?php echo $_id ?>"></div>
 			<div class="mixitup-page-stats mixitup-page-stats-<?php echo $_id ?>"></div>
 		</div>
-		
+
 	</div>
 	
 	<div class="wpmgEnd" data-id="<?php echo $_id ?>"></div>

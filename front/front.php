@@ -36,20 +36,29 @@ class wpmgFront {
 		}
 	}
 
+	public static function _getGalleryItems($_id){
+		global $wpdb;
+		$_a_wpmg_gallery_items = $wpdb->prefix . 'a_wpmg_gallery_items';
+		$gall_items = $wpdb->get_results("SELECT * FROM  $_a_wpmg_gallery_items where gallery_id = {$_id} ORDER BY $_a_wpmg_gallery_items.`id` DESC");
+		return ( count($gall_items) > 0 ) ? $gall_items : [];
+	}
+
 	public static function wpmgGalleryShortcode($attr){
+		$_id = (int)$attr['id'];
+		$gall_items = SELF::_getGalleryItems($_id);
 		ob_start();
 		include 'inc/index.php';
-		wp_enqueue_style( 'wpmg--style', plugins_url( '/style/style.css' , __FILE__ ) );
+		wp_enqueue_style( 'uwmg-style', plugins_url( '/style/style.css' , __FILE__ ) );
 
-		wp_enqueue_script( 'wpmg--libs', plugins_url( '/script/wpmg.libs.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
-		wp_enqueue_script( 'wpmg--script', plugins_url( '/script/wpmg-script.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
-		wp_localize_script( 'wpmg--script', 'wpmg', array(
+		wp_enqueue_script( 'uwmg-libs', plugins_url( '/script/wpmg.libs.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'uwmg-script', plugins_url( '/script/wpmg-script.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_localize_script( 'uwmg-script', 'wpmg', array(
 		        'ajax'     => admin_url('admin-ajax.php'),
 		        'site_url' => get_site_url(),
 		        'hashtag'  => get_option('social-media-hastag'),
-		        'youtubeChaneelId' => get_option('youtube-chaneel-id'),
-		        'lightBoxType' => get_option('lightBoxType'),
-		        'isPro' => 'false'
+		        'youtubeChaneelId' 	=> get_option('youtube-chaneel-id'),
+		        'lightBoxType' 		=> get_option('lightBoxType'),
+		        'isPro'    => 'false'
 		    )
 		);
 		return ob_get_clean();
@@ -148,59 +157,7 @@ class wpmgFront {
 	}
 
 	public static function frontDebug(){
-		global $wpdb;
-		$tbl = $wpdb->prefix.'a_wpmg_gallery_items';
-
-		$get = $wpdb->get_results(" SELECT * FROM $tbl ");
-
-		foreach ($get as $key => $gl) {
-
-			if( $gl->type == 'youtube' ){
-				$post_content = '<div class="fitVids-wrapper">
-							<iframe width="1200" height="675" src="https://www.youtube.com/embed/'.$gl->url.'?controls=0&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-						</div>';
-				$seo_image = 'https://i3.ytimg.com/vi/'.$gl->url.'/hqdefault.jpg';
-			} elseif ( $gl->type == 'vimeo' ) {
-				$post_content = '<div class="fitVids-wrapper">
-							<iframe src="https://player.vimeo.com/video/'.$gl->url.'?autoplay=1" width="1200" height="675" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-						</div>';
-				$seo_image = self::getVimeoThumb($gl->url);
-			} else {
-				$post_content = '<img src="'.$gl->image.'" alt="'.$gl->caption.'" style="max-width: 100%">';
-				$seo_image = $gl->image;
-			}
-			$post_id = wp_insert_post(
-				[
-					'post_title' 	=> wp_strip_all_tags( $gl->caption ),
-					'post_content'  => $post_content,
-  					'post_status'   => 'publish',
-  					'post_type'     => WPMG::$post_type,
-				]
-			);
-
-			if( $post_id ){
-				$wpdb->update(
-					$tbl,
-					[ 'post_id' => $post_id ],
-					[ 'id' => $gl->id ]
-				);
-
-				update_post_meta( $post_id, '_wp_page_template', 'template-microsite.php' );
-				update_post_meta( $post_id, '_dt_sidebar_position', 'disabled' );
-				update_post_meta( $post_id, '_dt_header_title', 'disabled' );
-
-				// SEO Tags
-				update_post_meta( $post_id, '_yoast_wpseo_opengraph-title', wp_strip_all_tags( $gl->caption ) );
-				update_post_meta( $post_id, '_yoast_wpseo_opengraph-description', wp_strip_all_tags( $gl->description.' ' . get_option('social-media-hastag') ) );
-				update_post_meta( $post_id, '_yoast_wpseo_opengraph-image', $seo_image );
-
-				update_post_meta( $post_id, '_yoast_wpseo_twitter-title', wp_strip_all_tags( $gl->caption ) );
-				update_post_meta( $post_id, '_yoast_wpseo_twitter-description', wp_strip_all_tags( $gl->description.' ' . get_option('social-media-hastag') ) );
-				update_post_meta( $post_id, '_yoast_wpseo_twitter-image', $seo_image );
-			}
-		}
-		return "done";
-		exit;
+		
 	}
 }
 ?>

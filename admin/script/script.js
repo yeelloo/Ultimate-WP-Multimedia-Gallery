@@ -185,7 +185,7 @@ let wpmgAPP = (function($){
 						var _html = `
 							<tr data-row="${_data.id}">
 				                <td data-title="Name">${_val}</td>
-				                <td data-title="Name"><input type="radio" name="default-tag" data-id="${_data.id}" value="${_data.id}" class="default-tag"</td>
+				                <td data-title="Default"><input type="radio" name="default-tag" data-id="${_data.id}" value="${_data.id}" class="default-tag"</td>
 				                <td data-title="Action" class="actions">
 				                    <a href="#" data-id="${_data.id}" class="button delete-wpmgTag">Delete</a>
 				                    <a href="#" data-id="${_data.id}" data-title="${_val}" class="button edit-wpmgTag">Edit</a>
@@ -261,6 +261,8 @@ let wpmgAPP = (function($){
 				if( textStatus == 'success' && _data.success ){
 					_busy(false, _this)
 					_this.closest('tr').remove()
+					// Remove selectable tags
+					jQuery(`.wpmgtags-list input[type="checkbox"][value="${_val}"]`).closest('li').remove()
 				}
 			});
 		});

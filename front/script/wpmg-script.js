@@ -18,10 +18,6 @@ let wpmgApp = (function($){
 		observer.observe();
 	}
 
-	that.scrolled = function () {
-		// scrollToEnd()
-	};
-
 	that.loaded = function () {
 		autoSelectDefaultFilter()
 		switchNavigation()
@@ -54,14 +50,6 @@ let wpmgApp = (function($){
 	    var results = regex.exec( url );
 	    return ( results == null ) ? "" : results[1];
 	}
-
-
-	let scrollToEnd = function(){
-		if(jQuery(window).scrollTop() == jQuery(document).height() - jQuery(window).height() ) {
-	        // console.log('scroll end')
-	    }
-	}
-
 
 	let autoSelectDefaultFilter = function(){
 		setTimeout(function(){
@@ -187,33 +175,11 @@ let wpmgApp = (function($){
 
 					$('.pp_description').html(_desc[0])
 
-					_id = parseInt(_desc[1])
-					var cta 	= $(`a[ref="ref-${_id}"]`).attr('data-cta-link').trim()
-					var ctaTxt 	= $(`a[ref="ref-${_id}"]`).attr('data-cta-text').trim()
-					var subs 	= parseInt($(`a[ref="ref-${_id}"]`).attr('data-subs'))
-					var post	= $(`a[ref="ref-${_id}"]`).attr('data-post')
-
-					$('.pp_custom_actions').attr('data-post', post);
-
-					if( cta.length > 0 && ctaTxt.length > 0 && wpmg.isPro == 'true'){
-						$('.pp_custom_actions').append(`<a class="wpmgcta" href="${cta}" target="_blank">${ctaTxt}</a>`)
-					}
-
-					if( wpmg.youtubeChaneelId.length > 10 && subs && wpmg.isPro == 'true' ){
-						$('.pp_custom_actions').append(`<a class="wpmgcta ctaSubscribeYTV" href="https://www.youtube.com/channel/${wpmg.youtubeChaneelId}?sub_confirmation=1" target="_blank">Subscribe</a>`)
-					}
-
-					if( (cta.length > 0 && ctaTxt.length > 0) || subs )
-						setTimeout(() => { $('.pp_custom_actions').show() }, 3000)
-
 					if( jQuery('.pp_content').height() < jQuery('.pp_fade').innerHeight() ){
 						jQuery('.pp_content').height(jQuery('.pp_fade').innerHeight())
 					}
 					
 				}
-			},
-			callback: function(){
-
 			}
 		});
 	}
@@ -284,14 +250,6 @@ jQuery(document).ready(function($) {
 
 jQuery(window).load(function($) {
 	wpmgApp.loaded();
-});
-
-jQuery(window).scroll(function($) {
-	wpmgApp.scrolled()
-});
-
-jQuery(window).resize(function($) {
-	// wpmgApp.resized()
 });
 
 var doit;
