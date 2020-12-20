@@ -2,11 +2,11 @@
 if (!defined('ABSPATH')) exit;
 /*
 	Plugin Name: Ultimate WP Multimedia Gallery
-	Plugin URI: https://webpuzzlemaster.com/
+	Plugin URI: https://webpuzzlemaster.com/wordpress-multimedia-gallery/
 	Description: Free responsive multimedia gallery displaying images and embedded video from YouTube and Vimeo while integrating social sharing and SEO elements.
 	Author: Masud Rana
 	Version: 1.0
-	Author URI: http://www.w3codemaster.com
+	Author URI: http://www.w3codemaster.com/
 	License: GPLv2 or later
 */
 
@@ -92,5 +92,6 @@ class WPMG {
 	    register_post_type( WPMG::$post_type, $args );
 	}
 }
-add_action( 'init', array( 'WPMG', 'init' ) );
+if( !class_exists('UWMGPRO') )
+	add_action( 'init', array( 'WPMG', 'init' ) );
 

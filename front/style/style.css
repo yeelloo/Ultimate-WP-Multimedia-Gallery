@@ -227,7 +227,7 @@ i.fc-facebook{background-position:-6px -5px}
 .mixitup-page-list{margin-right:-100px}
 .mixitup-page-stats{font-size:12px}
 .mixitup_menu_group.mixitup_menu_dropdown{display:none}
-#wpmg-filter-dropdown{width:calc(100% - 4px);border:none;background-color:#616161;color:#fff !important;padding:2px 6px;margin:0 auto}
+#wpmg-filter-dropdown{width:calc(100% - 4px);border:none;background-color:#616161;color:#fff !important;padding:2px 6px;margin:0 auto; min-height: 36px; border-radius: 2px; font-size: 16px; font-weight: 100}
 button.control.mixitup-control-active{background:red;color:#000}
 .mixitup_menu_dropdown{display:block;text-align:center}
 #wpmg-filter-dropdown:focus{outline:1px solid #fff}

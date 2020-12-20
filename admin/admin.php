@@ -128,14 +128,13 @@ class wpmgAdmin {
     	wp_enqueue_script( 'wpmg-admin-script', plugins_url( '/script/script.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
     	wp_localize_script( 'wpmg-admin-script', 'wpmg', array(
 	            'ajax'     => admin_url('admin-ajax.php'),
-	            'site_url' => get_site_url(),
-                'ez_url'   => WPMG__URL,
+	            'site_url' => get_site_url()
 	        )
 		);
 	}
 
 	public static function _admin_menu(){
-		add_menu_page('EZ SMS Blaster', 'WPM Gallery', 'edit_posts', 'wpmg-settings', ['wpmgAdmin', 'wpmg_settings'], plugins_url( '/images/icon.png' , __FILE__ ), 40);
+		add_menu_page('UWPM Gallery', 'UWPM Gallery', 'edit_posts', 'wpmg-settings', ['wpmgAdmin', 'wpmg_settings'], plugins_url( '/images/icon.png' , __FILE__ ), 40);
         add_submenu_page( 'wpmg-settings', 'Settings', 'Settings', 'edit_posts', 'wpmg-settings', ['wpmgAdmin','wpmg_settings']);
         add_submenu_page( 'wpmg-settings', 'Galleries', 'Galleries', 'edit_posts', 'wpm-gallery', ['wpmgAdmin','wpmg_index']);
         add_submenu_page( 'wpmg-settings', 'Add Gallery', 'Add Gallery', 'edit_posts', 'wpm-gallery-add', ['wpmgAdmin','wpmg_add']);
@@ -273,7 +272,6 @@ class wpmgAdmin {
 				}
 			} else {
 				// update post
-				// $thePost = get_post($get_item->post_id);
 				if( $thePost->post_type == WPMG::$post_type ){
 					$putPost = wp_update_post(
 						[

@@ -254,12 +254,14 @@ jQuery(window).load(function($) {
 
 var doit;
 function resizedw(){
-    let _nav = jQuery('.wpmg-filter.controls')
-	if( _nav.height() > 70 ){
-		_nav.addClass('wpmg-filter-dropdown')
-	} else {
-		_nav.removeClass('wpmg-filter-dropdown')
-	}
+	jQuery('.wpmg-filter.controls').each(function(index, el) {
+    	let _nav = jQuery(el)
+		if( _nav.height() > 70 ){
+			_nav.addClass('wpmg-filter-dropdown')
+		} else {
+			_nav.removeClass('wpmg-filter-dropdown')
+		}
+	});
 }
 window.onresize = function() {
     clearTimeout(doit);

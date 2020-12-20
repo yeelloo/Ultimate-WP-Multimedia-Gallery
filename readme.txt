@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: yeelloo
+Contributors: yeelloo, ruthkutt
 Tags: gallery, videos, YouTube, Vimeo
 Requires at least: 4.7
 Tested up to: 5.6
