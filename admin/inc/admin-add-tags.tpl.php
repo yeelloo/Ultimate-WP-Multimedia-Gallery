@@ -27,7 +27,7 @@ $tags = $wpdb->get_results(" SELECT * FROM  $_wpmg_gallery_tags WHERE gallery_id
             </thead>
             <tbody id="filtertbl" class="tagsListTbl <?php if(WPMG::$licenced) echo 'shortable' ?>">
             	<?php foreach ($tags as $key => $tag) : ?>
-	            <tr data-row="<?php echo $tag->id ?>" title="Drag to Re-order <?php if(!WPMG::$licenced) echo ' (Pro Only)' ?>">
+	            <tr id="<?php echo $tag->id ?>" data-row="<?php echo $tag->id ?>" title="Drag to Re-order <?php if(!WPMG::$licenced) echo ' (Pro Only)' ?>">
 	                <td data-title="Name">
 	                    <?php echo $tag->title ?>
 	                </td>

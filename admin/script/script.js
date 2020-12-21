@@ -40,8 +40,9 @@ let wpmgAPP = (function($){
 		    		$('#filtertbl > tr[data-row]').each(function(index, el) {
 		    			orderList.push( $(el).attr('data-row') )
 		    		});
+		    		$( "#filtertbl" ).closest('.wpmg-panel-body').addClass('busy')
 		    		$.post(wpmg.ajax, { action : 'wpmg_update_filter_order', orderList : orderList }, function(data, textStatus, xhr) {
-						
+						$( "#filtertbl" ).closest('.wpmg-panel-body').removeClass('busy')
 					});
 		    	}
 		    });
@@ -126,10 +127,10 @@ let wpmgAPP = (function($){
 			await $.post(
 				wpmg.ajax, 
 				{
-					action			: 'wpmg_update_item_ajax',
-					id 				: _this.attr('data-id'),
-					caption 		: $(`textarea[name="caption[${_id}][]"]`).val().replace(/"/g, '`'),
-					description 	: $(`textarea[name="description[${_id}][]"]`).val().replace(/"/g, '`'),
+					action		: 'wpmg_update_item_ajax',
+					id 			: _this.attr('data-id'),
+					caption 	: $(`textarea[name="caption[${_id}][]"]`).val().replace(/"/g, '`'),
+					description : $(`textarea[name="description[${_id}][]"]`).val().replace(/"/g, '`'),
 					type : $(`select[name="type[${_id}][]"]`).val(),
 					url  : $(`input[name="url[${_id}][]"]`).val(),
 					tags : $(`input[name="tagsInput[${_id}][]"]`).val(),

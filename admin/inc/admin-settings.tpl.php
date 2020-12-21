@@ -26,12 +26,12 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
                     </td>
                 </tr>
                 <tr>    
-                    <td>YouTube Channel ID <?php if(!WPMG::$licenced) echo '<sup>Pro Only</sup>' ?></td>
+                    <td>YouTube Channel ID <?php if(!WPMG::$licenced) echo '<sup>Pro</sup>' ?></td>
                     <td class="wpmgGridFull"><input <?php if(!WPMG::$licenced) echo 'disabled' ?> type="text" name="youtube-chaneel-id" id="youtube-chaneel-id" value="<?php echo get_option('youtube-chaneel-id') ?>" placeholder="YouTube Chaneel ID"></td>
                 </tr>
                 <tr>    
-                    <td>Social Meida HashTag</td>
-                    <td class="wpmgGridFull"><input type="text" name="social-media-hastag" id="social-media-hastag" value="<?php echo get_option('social-media-hastag') ?>" placeholder="Social Meida HashTag"></td>
+                    <td>Social Meida HashTag <?php if(!WPMG::$licenced) echo '<sup>Pro</sup>' ?></td>
+                    <td class="wpmgGridFull"><input <?php if(!WPMG::$licenced) echo 'disabled' ?> type="text" name="social-media-hastag" id="social-media-hastag" value="<?php echo get_option('social-media-hastag') ?>" placeholder="Social Meida HashTag"></td>
                 </tr>
                 <tr>
                     <td> </td>

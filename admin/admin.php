@@ -492,20 +492,7 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_update_filter_order_action(){
-		if( !WPMG::$licenced )
-			echo json_encode( ['success' => false] );
-
-		$_POST 		= stripslashes_deep($_POST);
-		$orderList 	= $_POST['orderList'];
-
-		global $wpdb;
-		$tags_table = $wpdb->prefix . 'a_wpmg_gallery_tags';
-
-		if( is_array($orderList) )
-			foreach ($orderList as $key => $value) 
-				$wpdb->update( $tags_table, ['menu_order' => $key + 1], ['id' => (int)$value]);
-			
-		echo json_encode( ['success' => true] );
+		echo json_encode( ['success' => true, 'msg' => 'Future Feature'] );
 		exit;
 	}
 	

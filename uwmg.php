@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) exit;
 	Description: Free responsive multimedia gallery displaying images and embedded video from YouTube and Vimeo while integrating social sharing and SEO elements.
 	Author: Masud Rana
 	Version: 1.0
-	Author URI: http://www.w3codemaster.com/
+	Author URI: http://w3codemaster.com/
 	License: GPLv2 or later
 */
 
@@ -21,7 +21,7 @@ class WPMG {
 	private static $initiated = false;
 	private static $_db_version = '1.0';
 	public static $post_type = 'uwmg';
-	public static $licenced = true;
+	public static $licenced = false;
 
 	public static function init() {
 		if ( ! self::$initiated && !class_exists('UWMGPRO') ) {
