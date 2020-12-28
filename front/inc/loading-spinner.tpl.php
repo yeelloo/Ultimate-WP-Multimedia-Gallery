@@ -1,4 +1,7 @@
-
+<?php
+//silance
+if (!defined('ABSPATH')) exit;
+?>
 <div class="wpmg-spinner"></div>
 <style>
 .wpmg-wrap.wpmg-loading .wpmg-container {

@@ -361,3 +361,6 @@ p.wpmg-add-action {
     color: #ec284c;
     font-weight: 500;
 }
+.wpmgAddNewGallery span.dashicons.dashicons-plus {
+    line-height: 32px !important;
+}

@@ -20,7 +20,6 @@ let wpmgAPP = (function($){
 		typeChange()
 		filterSetting()
 		paginationSettings()
-		changePermissions()
 		_updateSettings()
 	}
 
@@ -416,24 +415,6 @@ let wpmgAPP = (function($){
 			_this.closest('.wpmgInnerTbl').removeClass('busy')
 		});
 
-	}
-
-	let changePermissions = function(){
-		$('html').on('click', '.switchPermissiontoGData input[type="checkbox"]', async function(event) {
-			event.preventDefault();
-			let _this   = $(this)
-			let _id   	= _this.attr('id')
-			let _status = _this.is(':checked')
-
-			$.post(wpmg.ajax, {action: 'wpmg_change_data_permission_ajax', id: _this.val(), 'hasPermissiontoGData': _status}, function(data, textStatus, xhr) {
-				var _data = jQuery.parseJSON(data)
-				if( textStatus == 'success' && _data.success != false ){
-					_this.prop('checked', _status)
-				} else {
-					window.location = window.location
-				}
-			});
-		});
 	}
 
 	return that;

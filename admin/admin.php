@@ -9,8 +9,8 @@ class wpmgAdmin {
 	public static $wpmg_db_version = '1.0';
 
 	public function init() {
-		if ( ! self::$initiated ) {
-			self::init_hooks();
+		if ( ! SELF::$initiated ) {
+			SELF::init_hooks();
 		}
 	}
 
@@ -18,7 +18,7 @@ class wpmgAdmin {
 	 * Initializes WordPress hooks
 	 */
 	private static function init_hooks() {
-		self::$initiated = true;
+		SELF::$initiated = true;
 		// add_action( 'plugins_loaded', ['wpmgAdmin', '_update_db_check'] );
 		add_action( 'admin_enqueue_scripts', ['wpmgAdmin', '_admin_script'] );
 		add_action( 'admin_menu', ['wpmgAdmin', '_admin_menu'] );
@@ -33,7 +33,6 @@ class wpmgAdmin {
 		add_action( 'wp_ajax_wpmg_update_default_tags_ajax', ['wpmgAdmin', 'wpmg_update_default_tags_action'] ); 
 		add_action( 'wp_ajax_wpmg_filter_settings_ajax', ['wpmgAdmin', 'wpmg_filter_settings_action'] );
 		add_action( 'wp_ajax_wpmg_paginate_settings_ajax', ['wpmgAdmin', 'wpmg_paginate_settings_action'] );
-		add_action( 'wp_ajax_wpmg_change_data_permission_ajax', ['wpmgAdmin', 'wpmg_change_data_permission_action'] );
 		add_action( 'wp_ajax_wpmg_general_settings_ajax', ['wpmgAdmin', 'wpmg_general_settings_action'] );
 		add_action( 'wp_ajax_wpmg_filter_alignment_ajax', ['wpmgAdmin', 'wpmg_filter_alignment_action'] );
 		add_action( 'wp_ajax_wpmg_update_filter_order', ['wpmgAdmin', 'wpmg_update_filter_order_action'] );
@@ -48,7 +47,7 @@ class wpmgAdmin {
         flush_rewrite_rules();
         global $wpmg_db_version;
         if ( get_site_option( 'wpmg_db_version' ) != SELF::$wpmg_db_version ) 
-            self::EZ_install();
+            SELF::UWMG_admin_install();
     }
 
     public static function plugin_deactivation(){
@@ -56,15 +55,12 @@ class wpmgAdmin {
     }
 
 	public static function _update_db_check() {
-
-		update_option( '_update_db_check', time() );
-
         global $wpmg_db_version;
         if ( get_site_option( 'wpmg_db_version' ) != $wpmg_db_version ) 
-            self::EZ_install();
+            SELF::UWMG_admin_install();
     }
 
-    public static function EZ_install() {
+    public static function UWMG_admin_install() {
         global $wpdb;
         global $wpmg_db_version;
 
@@ -154,34 +150,43 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_save_gallery_items(){
-		$_POST 		= stripslashes_deep($_POST);
-		$items 		= (is_array($_POST['itemObj'])) ? $_POST['itemObj'] : [];
-		$ids   		= (int)$_POST['ids'];
-		$gallery_id = (int)$_POST['gallery_id'];
-		$video 		= (isset($_POST['video']) && $_POST['video'] == 'true') ? true : false;
+		$ids   			= (int)$_POST['ids'];
+		$gallery_id 	= (int)$_POST['gallery_id'];
+		$attachment_id 	= (int)$_POST['attachment_id'];
+		$image 			= sanitize_text_field($_POST['image']);
+		$caption 		= sanitize_text_field($_POST['caption']);
+		$description 	= sanitize_text_field($_POST['description']);
+		$type 			= sanitize_text_field($_POST['type']);
+		$url 			= sanitize_text_field($_POST['url']);		
+
+		$video 			= (isset($_POST['video']) && sanitize_text_field($_POST['video']) == 'true') ? true : false;
+
+		if( count($_POST) < 9 || count($_POST) > 10 ){
+			echo json_encode([ 'success' => false ]);
+			exit;
+		}
 
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
-		foreach ($items as $key => $item) {
-			$wpdb->insert(
-				$item_tbl,
-				[
-					'gallery_id' 	=> $gallery_id,
-					'attachment_id' => (int)$item['attachment_id'],
-					'image' 		=> ( $video ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : sanitize_text_field($item['image']),
-					'caption' 		=> sanitize_text_field($item['caption']),
-					'description' 	=> sanitize_text_field($item['description']),
-					'type' 			=> sanitize_text_field($item['type'])
-				],
-				[ '%d', '%d', '%s', '%s', '%s', '%s' ]
-			);
-		}
+		
+		$wpdb->insert(
+			$item_tbl,
+			[
+				'gallery_id' 	=> $gallery_id,
+				'attachment_id' => $attachment_id,
+				'image' 		=> ( $video ) ? WPMG__URL.'/admin/images/video_1280x720.jpg' : $image,
+				'caption' 		=> $caption,
+				'description' 	=> $description,
+				'type' 			=> $type
+			],
+			[ '%d', '%d', '%s', '%s', '%s', '%s' ]
+		);
+
 		echo json_encode([ 'success' => true ]);
 		exit;
 	}
 
 	public static function wpmg_update_item_action(){
-		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
 
@@ -300,7 +305,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_delete_item(){
-		$_POST 	= stripslashes_deep($_POST);
 		$_id 	= (int)$_POST['id'];
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_items';
@@ -310,7 +314,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_add_tags_action(){
-		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$tag_tbl 	= $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$gallery_id = (int)$_POST['gallery_id'];
@@ -331,15 +334,12 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_delete_tags_action(){
-		$_POST 	= stripslashes_deep($_POST);
 		$_id 	= (int)$_POST['id'];
-
 		global $wpdb;
 		$item_tbl 		= $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$tag_terms_tbl 	= $wpdb->prefix . 'a_wpmg_gallery_item_tag_terms';
 
 		$delete = $wpdb->delete( $item_tbl, [ 'id' => $_id ], [ '%d' ] );
-
 		// remove relations 
 		$trms = $wpdb->delete( $tag_terms_tbl, [ 'tag_id' => $_id ], [ '%d' ] );
 
@@ -348,7 +348,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_create_gallery_action(){
-		$_POST = stripslashes_deep($_POST);
 		global $wpdb;
 		$tag_tbl = $wpdb->prefix . 'a_wpmg_gallery';
 		$title   = sanitize_text_field($_POST['title']);
@@ -358,7 +357,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_delete_gallery_action(){
-		$_POST 	= stripslashes_deep($_POST);
 		$_id 	= (int)$_POST['id'];
 
 		global $wpdb;
@@ -374,7 +372,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_update_tags_action(){
-		$_POST 	= stripslashes_deep($_POST);
 		$_id 	= (int)$_POST['id'];
 
 		global $wpdb;
@@ -386,7 +383,6 @@ class wpmgAdmin {
 	}
 
 	public static function wpmg_update_default_tags_action(){
-		$_POST = stripslashes_deep($_POST);
 		$tagId = (int)$_POST['id'];
 		$gId   = (int)$_POST['_gid'];
 		
@@ -403,47 +399,45 @@ class wpmgAdmin {
 
 
 	public static function wpmg_filter_settings_action(){
-		$meta = stripslashes_deep($_POST);
-		update_option('filter-wrapper-bg', sanitize_text_field($meta['filter-wrapper-bg']), false);
-		update_option('filter-text-color', sanitize_text_field($meta['filter-text-color']), false);
-		update_option('filter-bg-color', sanitize_text_field($meta['filter-bg-color']), false);
-		update_option('filter-border-color', sanitize_text_field($meta['filter-border-color']), false);
-		update_option('act-filter-text-color', sanitize_text_field($meta['act-filter-text-color']), false);
-		update_option('act-filter-bg-color', sanitize_text_field($meta['act-filter-bg-color']), false);
-		update_option('act-filter-border-color', sanitize_text_field($meta['act-filter-border-color']), false);
+		if( is_array($_POST) && count($_POST) <= 8 ){
+			$meta = $_POST;
+			update_option('filter-wrapper-bg', sanitize_text_field($meta['filter-wrapper-bg']), false);
+			update_option('filter-text-color', sanitize_text_field($meta['filter-text-color']), false);
+			update_option('filter-bg-color', sanitize_text_field($meta['filter-bg-color']), false);
+			update_option('filter-border-color', sanitize_text_field($meta['filter-border-color']), false);
+			update_option('act-filter-text-color', sanitize_text_field($meta['act-filter-text-color']), false);
+			update_option('act-filter-bg-color', sanitize_text_field($meta['act-filter-bg-color']), false);
+			update_option('act-filter-border-color', sanitize_text_field($meta['act-filter-border-color']), false);
+		}
 		exit;
 	}
 
 	public static function wpmg_paginate_settings_action(){
-		$meta = stripslashes_deep($_POST);
-		update_option('paginate-text-color', sanitize_text_field($meta['paginate-text-color']), false);
-		update_option('paginate-bg-color', sanitize_text_field($meta['paginate-bg-color']), false);
-		update_option('act-paginate-text-color', sanitize_text_field($meta['act-paginate-text-color']), false);
-		update_option('act-paginate-bg-color', sanitize_text_field($meta['act-paginate-bg-color']), false);
+		if( is_array($_POST) && count($_POST) <= 5 ){
+			$meta = $_POST;
+			update_option('paginate-text-color', sanitize_text_field($meta['paginate-text-color']), false);
+			update_option('paginate-bg-color', sanitize_text_field($meta['paginate-bg-color']), false);
+			update_option('act-paginate-text-color', sanitize_text_field($meta['act-paginate-text-color']), false);
+			update_option('act-paginate-bg-color', sanitize_text_field($meta['act-paginate-bg-color']), false);
+		}
 		exit;
 	}
 
 	public static function wpmg_general_settings_action(){
-		$meta = stripslashes_deep($_POST);
-		update_option('youtube-chaneel-id', sanitize_text_field($meta['youtube-chaneel-id']), false);
-		update_option('social-media-hastag', sanitize_text_field($meta['social-media-hastag']), false);
-		update_option('lightBoxType', sanitize_text_field($meta['lightBoxType']), false);
+		if( is_array($_POST) && count($_POST) <= 4 ){
+			$meta = $_POST;
+			update_option('youtube-chaneel-id', sanitize_text_field($meta['youtube-chaneel-id']), false);
+			update_option('social-media-hastag', sanitize_text_field($meta['social-media-hastag']), false);
+			update_option('lightBoxType', sanitize_text_field($meta['lightBoxType']), false);
+		}
 		exit;
 	}
 
 	public static function wpmg_filter_alignment_action(){
-		$meta = stripslashes_deep($_POST);
-		update_option('wpmg-filter-align', sanitize_text_field($meta['align']), false);
-		exit;
-	}
-
-	public static function wpmg_change_data_permission_action(){
-		$_POST = stripslashes_deep($_POST);
-		$update = false;
-		if( isset($_POST['id']) && $_POST['hasPermissiontoGData'] ){
-			$update = update_user_meta((int)$_POST['id'], 'hasPermissiontoGData', $_POST['hasPermissiontoGData']);
+		if( is_array($_POST) && count($_POST) <= 2 ){
+			$meta = $_POST;
+			update_option('wpmg-filter-align', sanitize_text_field($meta['align']), false);
 		}
-		echo json_encode(['success' => $update]);
 		exit;
 	}
 
@@ -470,7 +464,6 @@ class wpmgAdmin {
 
 
 	public static function searchGalleryItems_action(){
-		$_GET 	= stripslashes_deep($_GET);
 		$string = sanitize_text_field($_GET['query']);
 		$gid    = (int)$_GET['gid'];
 		global $wpdb;
@@ -495,5 +488,4 @@ class wpmgAdmin {
 		echo json_encode( ['success' => true, 'msg' => 'Future Feature'] );
 		exit;
 	}
-	
 }

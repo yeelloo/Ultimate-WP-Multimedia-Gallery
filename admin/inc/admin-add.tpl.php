@@ -18,7 +18,7 @@ if( count($gall_result) != 1 ){
 	$isTag = ( isset($_GET['tag']) && (int)$_GET['tag'] > 0 ) ? true : false;
 
 	// 1. Get the current page number
-	$pageno = (isset($_GET['pageno'])) ? $_GET['pageno'] : 1;
+	$pageno = (isset($_GET['pageno'])) ? (int)$_GET['pageno'] : 1;
 
 	// 2. The formula for php pagination
 	$no_of_records_per_page = 30;
@@ -31,8 +31,8 @@ if( count($gall_result) != 1 ){
 
 	// 4. Constructing the SQL Query for pagination
 	if( $isTag ){
-		$tagId = (int)$_GET['tag'];
-		$sqlTags   = "SELECT * FROM $a_wpmg_items_terms  WHERE `tag_id` = $tagId";
+		$tagId   = (int)$_GET['tag'];
+		$sqlTags = "SELECT * FROM $a_wpmg_items_terms  WHERE `tag_id` = $tagId";
 		$tag_rel_result = $wpdb->get_results($sqlTags);
 		$inTagRelation  = [];
 		foreach ($tag_rel_result as $key => $rel) {
@@ -116,14 +116,14 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
 								<tbody>	
 									<tr>	
 										<td>Caption</td>
-										<td><textarea placeholder="Caption.." name="caption[<?php echo $item->id ?>][]" maxlength="190"  onkeyup="countChar(this)"><?php echo $item->caption ?></textarea>
+										<td><textarea placeholder="Caption.." name="caption[<?php echo $item->id ?>][]" maxlength="190"  onkeyup="countChar(this)"><?php echo stripslashes($item->caption) ?></textarea>
 											<span class="charNum"><?php echo ( 190 - strlen($item->caption) ); ?></span>
 										</td>
 									</tr>
 									<tr>	
 										<td>Description</td>
 										<td> 
-											<textarea placeholder="Description.." name="description[<?php echo $item->id ?>][]" maxlength="190"  onkeyup="countChar(this)"><?php echo $item->description ?></textarea> 
+											<textarea placeholder="Description.." name="description[<?php echo $item->id ?>][]" maxlength="190"  onkeyup="countChar(this)"><?php echo stripslashes($item->description) ?></textarea> 
 											<span class="charNum"><?php echo ( 190 - strlen($item->description) ); ?></span>
 										</td>
 									</tr>
@@ -341,30 +341,20 @@ jQuery(function($){
 		frame.on( 'insert', function() {
 			// Get media attachment details from the frame state
       		var attachment = frame.state().get('selection').first().toJSON();
-			console.log(attachment)
-
-
-			let itemObj = []
-			let _attach = {
-			    "attachment_id": attachment.id,
-			    "image": attachment.url,
-			    "caption": attachment.caption,
-			    "description": attachment.description,
-			    "type": "image",
-			    "url": "#image"
-			}
-			itemObj.push(_attach)
-
 			_busy(true)
-			
 			jQuery.ajax({
 				type: 'POST',
 				url: ajaxurl,
 				data: {
-					ids: 0,
-					gallery_id : $('#gallery_id').val(),
-					action: 'wpmg_save_gallery_items',
-					itemObj: itemObj
+					ids  			: 0,
+					action 			: 'wpmg_save_gallery_items',
+					gallery_id 		: $('#gallery_id').val(),
+					attachment_id 	: attachment.id,
+					image  			: attachment.url,
+					caption  		: attachment.caption,
+					description  	: attachment.description,
+					type  			: "image",
+					url  			: "#image"
 				},
 				success: function(){
 					
@@ -408,18 +398,13 @@ jQuery(function($){
 				type:   'single'
 			});
 
-			console.log('Shortcode: ', shortcode);
-
 			var attachments = wp.media.gallery.attachments( shortcode );
-
-			console.log('Attachments: ', attachments);
 
 			var selection = new wp.media.model.Selection( attachments.models, {
 				props:    attachments.props.toJSON(),
 				multiple: true
 			});
 
-			console.log('Selection: ', selection);
 			selection.gallery = attachments.gallery;
 
 			// Fetch the query's attachments, and then break ties from the
@@ -431,7 +416,6 @@ jQuery(function($){
 				selection.props.unset('orderby');
 			});
 
-			console.log('Selection props: ', selection.props);
 			return selection;
 		}
 
@@ -447,29 +431,21 @@ jQuery(function($){
 
 	jQuery('html').on('click', '.wpmgAddVideoToGallery', function(event) {
 		event.preventDefault();
-
-		let itemObj = []
-		let dfjkd = {
-		    "attachment_id": 0,
-		    "image": 'video_1280x720.jpg',
-		    "caption": '',
-		    "description": '',
-		    "type": "youtube",
-		    "url": "#image"
-		}
-		itemObj.push(dfjkd)
-
 		_busy(true)
-		
 		jQuery.ajax({
 			type: 'POST',
 			url: ajaxurl,
 			data: {
 				ids: 0,
-				gallery_id : $('#gallery_id').val(),
-				action: 'wpmg_save_gallery_items',
-				itemObj: itemObj,
-				video : true
+				gallery_id 		: $('#gallery_id').val(),
+				action 			: 'wpmg_save_gallery_items',
+				attachment_id 	: 0,
+				image  			: 'video_1280x720.jpg',
+				caption  		: '',
+				description  	: '',
+				type  			: 'youtube',
+				url  			: '#image',
+				video 			: true
 			},
 			success: function(){
 				

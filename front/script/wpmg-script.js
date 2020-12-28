@@ -99,6 +99,7 @@ let wpmgApp = (function($){
 				_href = url;
 
 				var _twitterURL = `https://twitter.com/intent/tweet?url=${post}&text=${_text}`;
+				console.log(_twitterURL)
 				_href = new URL(_twitterURL);
 			}
 
@@ -174,6 +175,12 @@ let wpmgApp = (function($){
 				if( _desc.length == 2 && parseInt(_desc[1]) > 0){
 
 					$('.pp_description').html(_desc[0])
+
+					_id = parseInt(_desc[1])
+					var post = $(`a[ref="ref-${_id}"]`).attr('data-post');
+					$('.pp_custom_actions').attr('data-post', post);
+					if(post.length > 0)
+						setTimeout(() => { $('.pp_custom_actions').show() }, 3000)
 
 					if( jQuery('.pp_content').height() < jQuery('.pp_fade').innerHeight() ){
 						jQuery('.pp_content').height(jQuery('.pp_fade').innerHeight())
