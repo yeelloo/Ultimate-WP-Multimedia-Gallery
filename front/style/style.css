@@ -174,7 +174,6 @@ div.dark_rounded #pp_full_res .pp_inline,div.dark_square #pp_full_res .pp_inline
 /*****************************************
 **************prettyPhoto*****************
 *****************************************/
-
 @font-face{font-family:Roboto-Regular;src:url(fonts/Roboto-Regular.ttf)}
 img{max-width:100%}
 .wpmg-wrap *, .pp_content_container *{font-family:Roboto-Regular,Georgia,serif}
@@ -210,8 +209,9 @@ i.fc-facebook{background-position:-6px -5px}
 .pp_social .facebook,.pp_social .twitter{width:auto;margin:0;padding-right:4px}
 .pp_social{clear:left}
 .pp_fade{overflow:hidden}
-.wpmfgmixer .targets{padding-top: 25px;}
-.wpmg-filter.controls{background:#333;border-radius:3px;padding:8px 7px;overflow:hidden;text-align:left}
+.wpmfgmixer .targets{padding-top: 25px !important;}
+.wpmg-filter.controls{background:transparent;border-radius:3px;padding:8px 7px;overflow:hidden;text-align:left; width: calc(100% - 40px); margin: 0 auto;}
+.wpmg-filter.controls.left-aligned {padding: 0;}
 .mixitup_menu_group{display:inline-block}
 .mixitup_menu_group.mixitup_menu_sort{display:flex;float:right}
 .mixitup_menu_sort button{margin:0;display:inline-block;position:relative;padding:0;height:36px;width:36px;background:#444}
@@ -260,126 +260,34 @@ button.mixitup-control.mixitup-control-active{background:#3c3c3c}
 @media (max-width: 385px) {
     a.wpmgcta{font-size:14px;letter-spacing:-.5px}
 }
-
-
-/* gContainer
----------------------------------------------------------------------- */
-
-.gcontainer {
-    padding: 20px 0;
-    text-align: justify;
-    overflow: hidden;
-}
-/* Target Elements
----------------------------------------------------------------------- */
-
-.mix {
-    background: #fff;
-    border-radius: 0px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #becddb;
-}
-
-.mix:before {
-    content: '';
-    display: inline-block;
-    padding-top: 53.25%;
-}
-
-.mix, .gap {
-    width: calc(25% - 18px);
-}
-.mix, .gap {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.mix.green {
-    color: #91e6c7;
-}
-
-.mix.pink {
-    color: #d595aa;
-}
-
-.mix.blue {
-    color: #5ecdde;
-}
-
-.wpmfgmixer .mix > a {
-    height: calc(100% - 4px);
-    position: absolute;
-    top: 0;
-    width: calc(100% - 4px);
-    margin: 2px;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #fff;
-    box-sizing: border-box;
-}
-
-button[data-filter="all"]{
-    display: none;
-}
-
-/* Grid Breakpoints
----------------------------------------------------------------------- */
-/* 1 Columns */
+.gcontainer{padding:20px 0;text-align:justify;overflow:hidden;margin:0 -10px}
+.mix{background:#fff;border-radius:0;margin-bottom:20px;position:relative;overflow:visible;box-shadow:3px 4px 6px #d6d6d6}
+.mix:before{content:'';display:inline-block;padding-top:53.25%}
+.mix,.gap{width:calc(25% - 0px);display:inline-block;vertical-align:top}
+.mix.green{color:#91e6c7}
+.mix.pink{color:#d595aa}
+.mix.blue{color:#5ecdde}
+.wpmfgmixer .mix > a{height:100%;position:absolute;top:0;width:100%;margin:0;background-position:center;background-size:cover;background-repeat:no-repeat;color:#fff;box-sizing:border-box}
+button[data-filter="all"]{display:none}
 @media screen and (min-width: 301px) {
-    .mix, .gap {
-        width: calc(100% - 0px);
-    }
-    .mixitup-state{
-        margin-top: -100px;
-    }
+	.mix,.gap{width:calc(100% - 0px)}
+	.mixitup-state{margin-top:-100px}
 }
-
-/* 2 Columns */
-
 @media screen and (min-width: 401px) {
-    .mix, .gap {
-        width: calc(100% - 0px);
-    }
-    .mixitup-state{
-        margin-top: -100px;
-    }
+	.mix,.gap{width:calc(100% - 0px)}
+	.mixitup-state{margin-top:-100px}
 }
-
-/* 3 Columns */
-
 @media screen and (min-width: 541px) {
-    .mix, .gap {
-        width: calc(50% - 12px);
-    }
-    .mixitup-state{
-        margin-top: -50px;
-    }
+	.mix,.gap{width:calc(50% - 0px)}
+	.mixitup-state{margin-top:-50px}
 }
-
 @media screen and (min-width: 641px) {
-    .mix, .gap {
-        width: calc(50% - 12px);
-    }
-    .mixitup-state{
-        margin-top: -20px;
-    }
+	.mix,.gap{width:calc(50% - 0px)}
+	.mixitup-state{margin-top:-20px}
 }
-
-/* 4 Columns */
-
 @media screen and (min-width: 961px) {
-    .mix, .gap {
-        width: calc(33.333% - 16px);
-    }
+	.mix,.gap{width:calc(33.333% - 0px)}
 }
-
-/* 5 Columns */
-
 @media screen and (min-width: 1281px) {
-    .mix, .gap {
-        width: calc(25% - 18px);
-    }
+	.mix,.gap{width:calc(25% - 0px)}
 }

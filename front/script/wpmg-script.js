@@ -10,7 +10,6 @@ let wpmgApp = (function($){
 		_constructor()
 		_initLighbox()
 		_socialShare()
-		_initMixItUp()
 	}
 	
 	let _constructor = function () {
@@ -19,7 +18,7 @@ let wpmgApp = (function($){
 	}
 
 	that.loaded = function () {
-		autoSelectDefaultFilter()
+		_initFilterizr()
 		switchNavigation()
 	}
 
@@ -50,24 +49,6 @@ let wpmgApp = (function($){
 	    var results = regex.exec( url );
 	    return ( results == null ) ? "" : results[1];
 	}
-
-	let autoSelectDefaultFilter = function(){
-		setTimeout(function(){
-			let galleryHash = getHashtag('#wpmGallFilter=')
-			if( galleryHash.length > 0 ){
-	            var galleryHashArr = galleryHash.split('=')
-	            if( galleryHashArr.length > 0 ){
-	                jQuery('.wpmg-filter button[data-filter=".'+galleryHashArr[1]+'"]').click()
-	            }
-	        } else {
-	        	jQuery('.wpmg-filter').each(function(i,e){
-		        	jQuery(e).find('.default-tag').trigger('click')
-		        })
-	        }
-		}, 1000)
-		jQuery('.wpmg-wrap').removeClass('wpmg-loading')
-	}
-
 
 	let _socialShare = function(){
 		jQuery('html').on('click', '.pp_social a', function(){
@@ -191,49 +172,41 @@ let wpmgApp = (function($){
 		});
 	}
 
-	let _initMixItUp = function(){
-		// var containerEl = document.querySelector('.gcontainer');
-		jQuery('.wpmfgmixer').each(function(i,e){
-			var _id = jQuery(e).attr('data-id')
-			var mixer = mixitup(e, {
-				controls: {
-			        scope: 'local',
-			    },
-			    animation: {
-			        animateResizeContainer: true // required to prevent column algorithm bug
-			    },
-			    selectors: {
-			        target: '.mix',
-			        pageList : `.mixitup-page-list-${_id}`,
-			        pageStats : `.mixitup-page-stats-${_id}`,
-			    },
-			    pagination: {
-			        limit: 20,
-			        maintainActivePage: true,
-			        loop: true,
-			        hidePageListIfSinglePage: true,
-			    },
-			    callbacks: {
-			        onMixEnd: function(state) {
-			            var FilterItem = jQuery('.mixitup-control-active').attr('data-filter');
-			            if( FilterItem.length > 0 ){
-			                FilterItem = FilterItem.replace('.', '');
-			                setHashtag('wpmGallFilter='+FilterItem);
-			                // Change dropdown
-			                jQuery('#wpmg-filter-dropdown').val(`.${FilterItem}`)
-			            }
-			        }
-			    }
-			});
-		})
-		
+	let _initFilterizr = function(){
+		if( $('.filtr-wrapper').length < 1 ) return false;
+		$('.filtr-wrapper').removeClass('noFilterizr')
+		$('.wpmg-wrap').removeClass('wpmg-loading')
 
-		jQuery('html').on('click', '#wpmg-filter-dropdown', function(event) {
+		$('html').on('change', '#wpmg-filter-dropdown', function(event) {
 			event.preventDefault();
 			let _this = $(this)
 			let _val  = _this.val()
-			jQuery(`button.control[data-filter="${_val}"]`).click()
-		});
+			$(`button.control[data-filter="${_val}"]`).click()
+		})
+
+		$('.wpmfgmixer').each(function(i,e){
+			var _id = $(e).attr('data-id')
+			window.filterizr = new window.Filterizr(`#uwmg-${_id} .filtr-wrapper`, {
+			    controlsSelector: `#uwmg-${_id} .fltr-controls`,
+			    layout: 'sameSize',
+			    gutterPixels: 20,
+			    spinner: {
+			        enabled: true,
+			    },
+			});
+
+			const simpleFilters = document.querySelectorAll(`#uwmg-${_id} .simplefilter button`);
+		    Array.from(simpleFilters).forEach((node) =>
+		        node.addEventListener('click', function() {
+		            simpleFilters.forEach((filter) => filter.classList.remove('mixitup-control-active'));
+		            node.classList.add('mixitup-control-active');
+		        })
+		    );
+		})
+
+		$('.wpmg-filter').each(function(i,e){
+        	$(e).find('.default-tag').trigger('click')
+        })
 	}
 
 	let switchNavigation = function(){

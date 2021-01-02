@@ -113,24 +113,24 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
             <tbody> 
                 <tr>    
                     <td>Text Color</td>
-                    <td class="wpmgGridFull"><input type="text" name="paginate-text-color" id="paginate-text-color" value="<?php echo get_option('paginate-text-color') ?>" placeholder="Pagination Text Color"></td>
+                    <td class="wpmgGridFull"><input type="text" name="paginate-text-color" id="paginate-text-color" value="<?php echo get_option('paginate-text-color') ?>" placeholder="Pagination Text Color" disabled title="Pro Only"></td>
                 </tr>
                 <tr>    
                     <td>BG Color</td>
-                    <td class="wpmgGridFull"><input type="text" name="paginate-bg-color" id="paginate-bg-color" value="<?php echo get_option('paginate-bg-color') ?>" placeholder="Pagination BG Color"></td>
+                    <td class="wpmgGridFull"><input type="text" name="paginate-bg-color" id="paginate-bg-color" value="<?php echo get_option('paginate-bg-color') ?>" placeholder="Pagination BG Color" disabled title="Pro Only"></td>
                 </tr>
                 <tr>    
                     <td>Active Text Color &nbsp; &nbsp;</td>
-                    <td class="wpmgGridFull"><input type="text" name="act-paginate-text-color" id="act-paginate-text-color" value="<?php echo get_option('act-paginate-text-color') ?>" placeholder="Pagination Active Text Color"></td>
+                    <td class="wpmgGridFull"><input type="text" name="act-paginate-text-color" id="act-paginate-text-color" value="<?php echo get_option('act-paginate-text-color') ?>" placeholder="Pagination Active Text Color" disabled title="Pro Only"></td>
                 </tr>
                 <tr>    
                     <td>Active BG Color</td>
-                    <td class="wpmgGridFull"><input type="text" name="act-paginate-bg-color" id="act-paginate-bg-color" value="<?php echo get_option('act-paginate-bg-color') ?>" placeholder="Pagination Active BG Color"></td>
+                    <td class="wpmgGridFull"><input type="text" name="act-paginate-bg-color" id="act-paginate-bg-color" value="<?php echo get_option('act-paginate-bg-color') ?>" placeholder="Pagination Active BG Color" disabled title="Pro Only"></td>
                 </tr>
                 <tr>
                     <td> </td>
                     <td style="text-align: right;"> 
-                        <a href="#" class="button wpmg-update-paginate-settings">Update</a>
+                        <a href="#" class="button wpmg-update-paginate-settings" disabled title="Pro Only">Update</a>
                     </td>
                 </tr>
             </tbody>
