@@ -236,8 +236,12 @@ jQuery(function($){
 
 	$('#autocomplete').autocomplete({
 	    serviceUrl: "<?php echo admin_url('admin-ajax.php').'?action=searchGalleryItems&gid='.$gallery_id ?>",
+	    noSuggestionNotice: 'No results',
 	    onSelect: function (suggestion) {
 	        var _youtube = ( suggestion.row.subscribe == '1' ) ? 'checked' : '';
+	        var _caption = decodeURI(suggestion.row.caption).replace(/\\'/g, "'");
+	        var _descrip = decodeURI(suggestion.row.description).replace(/\\'/g, "'");
+	        console.log(_caption.replace(/\\'/g, "'"));
 	        var _html = `
 	        <tr>
 				<td>#${suggestion.row.id}</td>
@@ -247,14 +251,14 @@ jQuery(function($){
 						<tbody>
 							<tr>
 								<td>Caption</td>
-								<td><textarea placeholder="Caption.." name="caption[${suggestion.row.id}][]" maxlength="190" onkeyup="countChar(this)">${suggestion.row.caption}</textarea>
+								<td><textarea placeholder="Caption.." name="caption[${suggestion.row.id}][]" maxlength="190" onkeyup="countChar(this)">${_caption}</textarea>
 									<span class="charNum">${190 - suggestion.row.caption.length}</span>
 								</td>
 							</tr>
 							<tr>
 								<td>Description</td>
 								<td> 
-									<textarea placeholder="Description.." name="description[${suggestion.row.id}][]" maxlength="190" onkeyup="countChar(this)">${suggestion.row.description}</textarea> 
+									<textarea placeholder="Description.." name="description[${suggestion.row.id}][]" maxlength="190" onkeyup="countChar(this)">${_descrip}</textarea> 
 									<span class="charNum">${190 - suggestion.row.description.length}</span>
 								</td>
 							</tr>

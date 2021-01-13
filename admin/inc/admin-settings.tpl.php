@@ -47,7 +47,7 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
             <tbody> 
                 <tr>    
                     <td>Left Aligned Filters</td>
-                    <td class="">
+                    <td style="display: flex;justify-content: center;align-items: center;">
                         <input type="radio" id="left-aligned" name="filter-align" value="left-aligned" <?php if( get_option('wpmg-filter-align') == '' || get_option('wpmg-filter-align') == 'left-aligned' ) echo 'checked' ?>>
                         <label for="left-aligned">
                             <img src="<?php echo WPMG__URL ?>/admin/images/left-menu.png" alt="Left Alignment" width="" style="border: 1px solid #ccc; border-radius: 4px;">
@@ -56,7 +56,7 @@ $lightBoxType = ( get_option('lightBoxType') != '' ) ? get_option('lightBoxType'
                 </tr>
                 <tr>
                     <td>Center Aligned Filters</td>
-                    <td class="">
+                    <td style="display: flex;justify-content: center;align-items: center;">
                         <input type="radio" id="center-aligned" name="filter-align" value="center-aligned" <?php if( get_option('wpmg-filter-align') == 'center-aligned' ) echo 'checked' ?>>
                         <label for="center-aligned">
                             <img src="<?php echo WPMG__URL ?>/admin/images/center-menu.png" alt="Center Alignment" width="" style="border: 1px solid #ccc; border-radius: 4px;">

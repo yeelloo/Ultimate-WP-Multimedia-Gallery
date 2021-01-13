@@ -389,8 +389,10 @@ class wpmgAdmin {
 		global $wpdb;
 		$item_tbl = $wpdb->prefix . 'a_wpmg_gallery_tags';
 		$find  	  = $wpdb->get_results(" SELECT * FROM  $item_tbl WHERE `first` = 1 AND gallery_id = $gId");
-		foreach ($find as $key => $defaultTags) {
-			$wpdb->update( $item_tbl, [ 'first' => 0 ], [ 'id' => $defaultTags->id ], [ '%d' ], [ '%d' ] );
+		if( count($find) > 0 ){
+			foreach ($find as $key => $defaultTags) {
+				$wpdb->update( $item_tbl, [ 'first' => 0 ], [ 'id' => $defaultTags->id ], [ '%d' ], [ '%d' ] );
+			}
 		}
 		$update = $wpdb->update( $item_tbl, [ 'first' => 1 ], [ 'id' => $tagId, 'gallery_id' => $gId ], [ '%d' ], [ '%d', '%d' ] );
 		echo json_encode(['success' => $update]);
@@ -400,43 +402,45 @@ class wpmgAdmin {
 
 	public static function wpmg_filter_settings_action(){
 		if( is_array($_POST) && count($_POST) <= 8 ){
-			$meta = $_POST;
-			update_option('filter-wrapper-bg', sanitize_text_field($meta['filter-wrapper-bg']), false);
-			update_option('filter-text-color', sanitize_text_field($meta['filter-text-color']), false);
-			update_option('filter-bg-color', sanitize_text_field($meta['filter-bg-color']), false);
-			update_option('filter-border-color', sanitize_text_field($meta['filter-border-color']), false);
-			update_option('act-filter-text-color', sanitize_text_field($meta['act-filter-text-color']), false);
-			update_option('act-filter-bg-color', sanitize_text_field($meta['act-filter-bg-color']), false);
-			update_option('act-filter-border-color', sanitize_text_field($meta['act-filter-border-color']), false);
+			$dataKeySet = ['filter-wrapper-bg', 'filter-text-color', 'filter-bg-color', 'filter-border-color', 'act-filter-text-color',
+			 'act-filter-bg-color', 'act-filter-border-color'];
+
+			foreach ($dataKeySet as $key => $value)
+				if( isset($_POST[$value]) )
+					update_option($value, sanitize_text_field($_POST[$value]), false);
 		}
-		exit;
+		exit;	
 	}
 
 	public static function wpmg_paginate_settings_action(){
 		if( is_array($_POST) && count($_POST) <= 5 ){
-			$meta = $_POST;
-			update_option('paginate-text-color', sanitize_text_field($meta['paginate-text-color']), false);
-			update_option('paginate-bg-color', sanitize_text_field($meta['paginate-bg-color']), false);
-			update_option('act-paginate-text-color', sanitize_text_field($meta['act-paginate-text-color']), false);
-			update_option('act-paginate-bg-color', sanitize_text_field($meta['act-paginate-bg-color']), false);
+			$dataKeySet = ['paginate-text-color', 'paginate-bg-color', 'act-paginate-text-color', 'act-paginate-bg-color'];
+
+			foreach ($dataKeySet as $key => $value)
+				if( isset($_POST[$value]) )
+					update_option($value, sanitize_text_field($_POST[$value]), false);
 		}
-		exit;
+		exit;	
 	}
 
 	public static function wpmg_general_settings_action(){
 		if( is_array($_POST) && count($_POST) <= 4 ){
-			$meta = $_POST;
-			update_option('youtube-chaneel-id', sanitize_text_field($meta['youtube-chaneel-id']), false);
-			update_option('social-media-hastag', sanitize_text_field($meta['social-media-hastag']), false);
-			update_option('lightBoxType', sanitize_text_field($meta['lightBoxType']), false);
+			$dataKeySet = ['youtube-chaneel-id', 'social-media-hastag', 'lightBoxType'];
+
+			foreach ($dataKeySet as $key => $value)
+				if( isset($_POST[$value]) )
+					update_option($value, sanitize_text_field($_POST[$value]), false);
 		}
 		exit;
 	}
 
 	public static function wpmg_filter_alignment_action(){
 		if( is_array($_POST) && count($_POST) <= 2 ){
-			$meta = $_POST;
-			update_option('wpmg-filter-align', sanitize_text_field($meta['align']), false);
+			$dataKeySet = ['wpmg-filter-align' => 'align'];
+
+			foreach ($dataKeySet as $key => $value)
+				if( isset($_POST[$value]) )
+					update_option($key, sanitize_text_field($_POST[$value]), false);
 		}
 		exit;
 	}
@@ -466,6 +470,10 @@ class wpmgAdmin {
 	public static function searchGalleryItems_action(){
 		$string = sanitize_text_field($_GET['query']);
 		$gid    = (int)$_GET['gid'];
+		if( $gid < 1 || strlen($string) < 1 ){
+			echo json_encode([]);
+			exit;
+		}
 		global $wpdb;
 		$items_tbl = $wpdb->prefix.'a_wpmg_gallery_items';
 		$get_results = $wpdb->get_results("SELECT * FROM $items_tbl WHERE (`caption` LIKE '%{$string}%' OR `description` LIKE '%{$string}%') AND gallery_id = {$gid}");
