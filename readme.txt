@@ -1,6 +1,6 @@
-=== Plugin Name ===
+=== Ultimate WP Multimedia Gallery ===
 Contributors: yeelloo, ruthkutt
-Tags: gallery, videos, YouTube, Vimeo
+Tags: Tags: image gallery, photo gallery, responsive gallery, wordpress gallery plugin, video gallery, youtube gallery, vimeo gallery, videos, YouTube, Vimeo
 Requires at least: 4.7
 Tested up to: 5.6
 Stable tag: 1.0
